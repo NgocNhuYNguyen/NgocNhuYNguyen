@@ -1,0 +1,27 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Ngoc Nhu Y Nguyen"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - href: Math437_Project.qmd
+        text: Math 437 - Project
+        icon: megaphone
+      
+format:
+  html:
+    fontcolor: "black"
+    linkcolor: "blue"
+    mainfont: "Times New Roman"
+    fontsize: 14px
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
+
