@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>math437_project – Ngoc Nhu Y Nguyen</title>
+<title>Predicting Happiness from Lifestyle and Mental Health Factors – Ngoc Nhu Y Nguyen</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -112,18 +146,717 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#motivation-and-context" id="toc-motivation-and-context" class="nav-link active" data-scroll-target="#motivation-and-context">Motivation and Context</a>
+  <ul class="collapse">
+  <li><a href="#diet-types" id="toc-diet-types" class="nav-link" data-scroll-target="#diet-types">Diet Types</a></li>
+  <li><a href="#mental-health-conditions" id="toc-mental-health-conditions" class="nav-link" data-scroll-target="#mental-health-conditions">Mental Health Conditions</a></li>
+  </ul></li>
+  <li><a href="#main-objective" id="toc-main-objective" class="nav-link" data-scroll-target="#main-objective">Main Objective</a></li>
+  <li><a href="#packages-used-in-this-analysis" id="toc-packages-used-in-this-analysis" class="nav-link" data-scroll-target="#packages-used-in-this-analysis">Packages Used In This Analysis</a></li>
+  <li><a href="#data-description" id="toc-data-description" class="nav-link" data-scroll-target="#data-description">Data Description</a>
+  <ul class="collapse">
+  <li><a href="#data-limitations" id="toc-data-limitations" class="nav-link" data-scroll-target="#data-limitations">Data Limitations</a></li>
+  </ul></li>
+  <li><a href="#data-wrangling-optional-section" id="toc-data-wrangling-optional-section" class="nav-link" data-scroll-target="#data-wrangling-optional-section">Data Wrangling (Optional Section)</a>
+  <ul class="collapse">
+  <li><a href="#handling-missing-data" id="toc-handling-missing-data" class="nav-link" data-scroll-target="#handling-missing-data">Handling Missing Data</a></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#happiness-score-response-variable" id="toc-happiness-score-response-variable" class="nav-link" data-scroll-target="#happiness-score-response-variable">1. Happiness Score (Response Variable)</a></li>
+  <li><a href="#screen-time-per-day-hours" id="toc-screen-time-per-day-hours" class="nav-link" data-scroll-target="#screen-time-per-day-hours">2. Screen Time per Day (Hours)</a></li>
+  <li><a href="#sleep-hours" id="toc-sleep-hours" class="nav-link" data-scroll-target="#sleep-hours">3. Sleep Hours</a></li>
+  <li><a href="#relationship-between-lifestyle-and-happiness" id="toc-relationship-between-lifestyle-and-happiness" class="nav-link" data-scroll-target="#relationship-between-lifestyle-and-happiness">4. Relationship between Lifestyle and Happiness</a></li>
+  </ul></li>
+  <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling">Modeling</a></li>
+  <li><a href="#insights" id="toc-insights" class="nav-link" data-scroll-target="#insights">Insights</a>
+  <ul class="collapse">
+  <li><a href="#limitations-and-future-work" id="toc-limitations-and-future-work" class="nav-link" data-scroll-target="#limitations-and-future-work">Limitations and Future Work</a></li>
+  <li><a href="#reflection-optional-subsection" id="toc-reflection-optional-subsection" class="nav-link" data-scroll-target="#reflection-optional-subsection">Reflection (Optional Subsection)</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predicting Happiness from Lifestyle and Mental Health Factors</h1>
+</div>
 
 
 
-<p>This page will contain my Math 437 final project.</p>
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
+
+
+<section id="motivation-and-context" class="level2">
+<h2 class="anchored" data-anchor-id="motivation-and-context">Motivation and Context</h2>
+<p>Mental health is one of the most important parts of a person’s overall well-being. One way to measure how people feel is by looking at their <strong>happiness</strong>—a key part of mental health. This project looks at how daily habits like diet, exercise, sleep, and screen time, as well as mental health conditions like anxiety or depression, might affect how happy people feel.</p>
+<p>This topic matters to me because I believe small lifestyle changes can make a big difference in how we feel each day. If we can find out which habits or health conditions have the strongest connection to happiness, people can make better decisions for their own well-being. This research could also be useful for doctors, therapists, teachers, and public health leaders who want to help others feel happier and healthier.</p>
+<p>To follow along with this analysis, it helps to understand a few key terms:</p>
+<section id="diet-types" class="level3">
+<h3 class="anchored" data-anchor-id="diet-types">Diet Types</h3>
+<ul>
+<li><strong>Vegetarian</strong>: Doesn’t include meat but may include dairy or eggs.</li>
+<li><strong>Vegan</strong>: Doesn’t include any animal products, including dairy, eggs, or honey.</li>
+<li><strong>Balanced diet</strong>: Includes a mix of healthy foods like fruits, vegetables, proteins, grains, and fats.</li>
+<li><strong>Keto</strong>: A low-carb, high-fat diet that helps the body burn fat instead of sugar for energy.</li>
+<li><strong>Junk food</strong>: Foods that are highly processed and full of sugar or unhealthy fats, like fast food and soda.</li>
+</ul>
+</section>
+<section id="mental-health-conditions" class="level3">
+<h3 class="anchored" data-anchor-id="mental-health-conditions">Mental Health Conditions</h3>
+<ul>
+<li><strong>PTSD</strong>: A condition that can happen after a scary or traumatic event, causing flashbacks or anxiety.</li>
+<li><strong>Depression</strong>: A condition where a person feels very sad, hopeless, and loses interest in things they used to enjoy.</li>
+<li><strong>Anxiety</strong>: Strong feelings of worry or fear that can get in the way of daily life.</li>
+<li><strong>Bipolar disorder</strong>: A condition where a person’s mood swings between extreme highs (called mania) and deep lows (depression).</li>
+</ul>
+<p>Many scientists and health experts believe there is a strong connection between lifestyle, mental health, and happiness. For example, getting regular exercise can boost mood, while poor sleep or high stress can make people feel worse. This project will explore those connections and try to figure out which habits and conditions are most related to how happy someone feels.</p>
+</section>
+</section>
+<section id="main-objective" class="level2">
+<h2 class="anchored" data-anchor-id="main-objective">Main Objective</h2>
+<p>The main goal of this project is to <strong>predict a person’s happiness score</strong> based on their lifestyle habits and mental health conditions.</p>
+<p>By analyzing the “Mental Health and Lifestyle Habits Dataset (2019–2024),” I aim to identify which factors—such as diet, exercise, sleep, screen time, and existing mental health conditions—are most strongly associated with happiness. To do this, I will use a statistical modeling technique called <strong>LASSO regression</strong>, which not only builds a predictive model but also helps select the most important variables from the data.</p>
+<p>Ultimately, the objective is to better understand how everyday choices and psychological well-being are linked to happiness, and to provide insights that could help individuals and professionals support mental health more effectively.</p>
+</section>
+<section id="packages-used-in-this-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="packages-used-in-this-analysis">Packages Used In This Analysis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(selectiveInference)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://github.com/jennybc/here_here">here</a></td>
+<td>to easily load and save data</td>
+</tr>
+<tr class="even">
+<td><a href="https://readr.tidyverse.org/">readr</a></td>
+<td>to import the CSV file data</td>
+</tr>
+<tr class="odd">
+<td><a href="https://dplyr.tidyverse.org/">dplyr</a></td>
+<td>to massage and summarize data</td>
+</tr>
+<tr class="even">
+<td><a href="https://rsample.tidymodels.org/">rsample</a></td>
+<td>to split data into training and test sets</td>
+</tr>
+<tr class="odd">
+<td><a href="https://ggplot2.tidyverse.org/">ggplot2</a></td>
+<td>to create nice-looking and informative graphs</td>
+</tr>
+<tr class="even">
+<td><a href="https://naniar.njtierney.com/">naniar</a></td>
+<td>to summarize and visualize missing data</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-description">Data Description</h2>
+<p>The dataset used in this project is titled <strong>“Mental Health and Lifestyle Habits (2019–2024)”</strong>, and it was created to explore the relationship between people’s lifestyle choices and their mental well-being. The data was collected from individuals around the world between 2019 and 2024 using online surveys and self-reported questionnaires.</p>
+<p>The dataset was uploaded to Kaggle by <strong>Atharva Soundankar</strong> in 2025 and is publicly available for analysis. You can access it at the following link:<br>
+<a href="https://www.kaggle.com/datasets/atharvasoundankar/mental-health-and-lifestyle-habits-2019-2024/data">Soundankar, Atharva. <em>Mental Health and Lifestyle Habits (2019–2024)</em>. Kaggle, 2025</a></p>
+<p>This dataset includes 12 variables:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 6%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Country</code></td>
+<td>chr</td>
+<td>The respondent’s country of residence</td>
+</tr>
+<tr class="even">
+<td><code>Age</code></td>
+<td>dbl</td>
+<td>Age of the respondent (in years)</td>
+</tr>
+<tr class="odd">
+<td><code>Gender</code></td>
+<td>chr</td>
+<td>Gender identity of the respondent</td>
+</tr>
+<tr class="even">
+<td><code>Exercise Level</code></td>
+<td>chr</td>
+<td>Frequency or intensity of physical activity (e.g., low, moderate, high)</td>
+</tr>
+<tr class="odd">
+<td><code>Diet Type</code></td>
+<td>chr</td>
+<td>Type of diet (e.g., vegetarian, vegan, balanced, keto, junk food)</td>
+</tr>
+<tr class="even">
+<td><code>Sleep Hours</code></td>
+<td>dbl</td>
+<td>Average number of hours of sleep per day</td>
+</tr>
+<tr class="odd">
+<td><code>Stress Level</code></td>
+<td>chr</td>
+<td>Self-reported stress level (e.g., low, moderate, high)</td>
+</tr>
+<tr class="even">
+<td><code>Mental Health Condition</code></td>
+<td>chr</td>
+<td>Any diagnosed mental health condition (e.g., anxiety, depression, PTSD)</td>
+</tr>
+<tr class="odd">
+<td><code>Work Hours per Week</code></td>
+<td>dbl</td>
+<td>Number of hours worked per week</td>
+</tr>
+<tr class="even">
+<td><code>Screen Time per Day (Hours)</code></td>
+<td>dbl</td>
+<td>Average number of hours spent looking at screens each day</td>
+</tr>
+<tr class="odd">
+<td><code>Social Interaction Score</code></td>
+<td>dbl</td>
+<td>Self-rated score of social connection or engagement on scale (1–10)</td>
+</tr>
+<tr class="even">
+<td><code>Happiness Score</code></td>
+<td>dbl</td>
+<td>Self-reported happiness score on scale (1–10)</td>
+</tr>
+</tbody>
+</table>
+<p>These variables provide a mix of <strong>demographic</strong>, <strong>behavioral</strong>, and <strong>psychological</strong> information that allows us to investigate how different aspects of daily life and mental health may influence a person’s overall happiness.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Mental.Health.Lifestyle <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Mental_Health_Lifestyle_Dataset.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Mental.Health.Lifestyle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 12
+  Country   Age Gender `Exercise Level` `Diet Type` `Sleep Hours` `Stress Level`
+  &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;         
+1 Brazil     48 Male   Low              Vegetarian            6.3 Low           
+2 Austra…    31 Male   Moderate         Vegan                 4.9 Low           
+3 Japan      37 Female Low              Vegetarian            7.2 High          
+4 Brazil     35 Male   Low              Vegan                 7.2 Low           
+5 Germany    46 Male   Low              Balanced              7.3 Low           
+6 Japan      23 Other  Moderate         Balanced              2.7 Moderate      
+# ℹ 5 more variables: `Mental Health Condition` &lt;chr&gt;,
+#   `Work Hours per Week` &lt;dbl&gt;, `Screen Time per Day (Hours)` &lt;dbl&gt;,
+#   `Social Interaction Score` &lt;dbl&gt;, `Happiness Score` &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<section id="data-limitations" class="level3">
+<h3 class="anchored" data-anchor-id="data-limitations">Data Limitations</h3>
+<p>Although the “Mental Health and Lifestyle Habits Dataset (2019–2024)” is useful for practicing data analysis and modeling, it has several problems that we should keep in mind:</p>
+<p><strong>The data is self-reported:</strong></p>
+<p>All the information in this dataset comes from people filling out surveys about themselves. This means there is no way to check if what they reported is accurate. People might overestimate healthy habits (like saying they exercise more than they do) or underestimate unhealthy ones (like not getting enough sleep). They might also give answers they think are more socially acceptable instead of being completely honest. This can make the data less reliable.</p>
+<p><strong>Some variables are unclear or inconsistent:</strong></p>
+<p>Some of the questions in the dataset are vague or not measured well. For example:</p>
+<p>“Stress Level” is said to be on a 1–10 scale, but the data uses categories like “Low,” “Moderate,” and “High,” which doesn’t match.</p>
+<p>“Exercise Level” is just labeled as “Low,” “Moderate,” or “High,” but it doesn’t tell us how often or how intensely people exercise.</p>
+<p>The “Mental Health Condition” column includes things like depression and anxiety, but it doesn’t explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.</p>
+<p><strong>Some data is missing or unclear:</strong></p>
+<p>For example, the “Gender” column includes a large number of people marked as “Other,” but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it’s hard to use this information meaningfully.</p>
+<p><strong>The results might not apply to everyone:</strong></p>
+<p>The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we don’t know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.</p>
+<p>Because of these issues, we should treat this dataset more like a practice dataset—similar to examples used in class—rather than something that gives real-world, trustworthy results. It’s still helpful for learning how to explore data and build models, but the results should not be taken as scientifically accurate.</p>
+</section>
+</section>
+<section id="data-wrangling-optional-section" class="level2">
+<h2 class="anchored" data-anchor-id="data-wrangling-optional-section">Data Wrangling (Optional Section)</h2>
+<p>The dataset I imported is already in a tidy format, meaning each row represents one observation and each column represents a variable. Therefore, no structural reshaping of the data was required.</p>
+<p>However, to build and evaluate a predictive model effectively, it is essential to split the data into two parts: a <strong>training set</strong> and a <strong>test set</strong>. The training set (80% of the data) will be used to build the model and identify relationships between predictor variables—such as lifestyle habits and demographic characteristics—and the response variable, which is the <strong>Happiness Score</strong>. The test set (20% of the data) is held out and used to assess how well the model performs on new, unseen data.</p>
+<p>This kind of split is important because it prevents overfitting and helps evaluate how well the model will generalize in real-world applications. The 80/20 ratio is a standard practice that strikes a balance between having enough data to train the model and reserving enough to test it meaningfully. To ensure reproducibility of the results, a random seed was set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(Mental.Health.Lifestyle)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a> train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(n, <span class="at">size =</span> <span class="fu">floor</span>(<span class="fl">0.8</span><span class="sc">*</span>n))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a> MHL_train <span class="ot">&lt;-</span> Mental.Health.Lifestyle[train_indices,]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a> MHL_test <span class="ot">&lt;-</span> Mental.Health.Lifestyle[<span class="sc">-</span>train_indices,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="handling-missing-data" class="level3">
+<h3 class="anchored" data-anchor-id="handling-missing-data">Handling Missing Data</h3>
+<p>Before proceeding with modeling or analysis, it’s important to check for any missing data. Identifying missing values early allows us to decide whether to impute (fill in), remove, or otherwise handle them to avoid bias or errors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">miss_var_summary</span>(Mental.Health.Lifestyle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 3
+   variable                    n_miss pct_miss
+   &lt;chr&gt;                        &lt;int&gt;    &lt;num&gt;
+ 1 Country                          0        0
+ 2 Age                              0        0
+ 3 Gender                           0        0
+ 4 Exercise Level                   0        0
+ 5 Diet Type                        0        0
+ 6 Sleep Hours                      0        0
+ 7 Stress Level                     0        0
+ 8 Mental Health Condition          0        0
+ 9 Work Hours per Week              0        0
+10 Screen Time per Day (Hours)      0        0
+11 Social Interaction Score         0        0
+12 Happiness Score                  0        0</code></pre>
+</div>
+</div>
+<p>After running the code, there are no missing values in any of the columns. This simplifies the data preparation process, as no imputation or data cleaning for missing values is currently required.</p>
+</section>
+</section>
+<section id="exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h2>
+<p>My objective is to understand how lifestyle factors may influence an individual’s overall happiness, specifically focusing on how <strong>screen time</strong> and <strong>sleep hours</strong> might relate to the <strong>happiness score</strong>. Since I have not yet conducted feature selection (e.g., via LASSO), I do not know which predictors are statistically most important. However, based on intuition and prior research, I initially suspect that <strong>screen time per day</strong> and <strong>sleep hours</strong> could play a meaningful role in predicting happiness.</p>
+<p>This section explores three key variables:</p>
+<ul>
+<li><p><code>Happiness Score</code> (the response variable)</p></li>
+<li><p><code>Screen Time per Day (Hours)</code> (a potentially important predictor)</p></li>
+<li><p><code>Sleep Hours</code> (a potentially important predictor)</p></li>
+</ul>
+<p>The following analysis examines the distributions of these variables, checks for unusual or problematic values, and begins to explore their relationships to guide future modeling.</p>
+<section id="happiness-score-response-variable" class="level3">
+<h3 class="anchored" data-anchor-id="happiness-score-response-variable">1. Happiness Score (Response Variable)</h3>
+<p><strong>Check for unusual values</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># since `Happiness Score` is on the scale 1 - 10</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>unusual_happiness <span class="ot">&lt;-</span> MHL_train <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span> <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">|</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">10</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>unusual_happiness</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 12
+# ℹ 12 variables: Country &lt;chr&gt;, Age &lt;dbl&gt;, Gender &lt;chr&gt;, Exercise Level &lt;chr&gt;,
+#   Diet Type &lt;chr&gt;, Sleep Hours &lt;dbl&gt;, Stress Level &lt;chr&gt;,
+#   Mental Health Condition &lt;chr&gt;, Work Hours per Week &lt;dbl&gt;,
+#   Screen Time per Day (Hours) &lt;dbl&gt;, Social Interaction Score &lt;dbl&gt;,
+#   Happiness Score &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Then, there is no unusual values — all scores fall between 1 and 10, as expected.</p>
+<p><strong>Summary statistics</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>MHL_train <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_total =</span> <span class="fu">n</span>(), </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_missing =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>)), </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>, <span class="fl">0.25</span>),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">median</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>, <span class="fl">0.75</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max =</span> <span class="fu">max</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">IQR =</span> <span class="fu">IQR</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  num_total num_missing   min    Q1 median    Q3   max  mean    sd   IQR
+      &lt;int&gt;       &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1      2400           0     1   3.2    5.4   7.5    10  5.40  2.55   4.3</code></pre>
+</div>
+</div>
+<p><strong>Visualization</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> MHL_train, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">center =</span> <span class="dv">5</span>, <span class="at">binwidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Happiness Score"</span>, <span class="at">x =</span> <span class="st">"Happiness Score"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation:</strong></p>
+<p>The happiness scores range from 1 to 10, with an average (mean) of approximately 5.4 and a standard deviation of about 2.55. The distribution appears fairly spread out and roughly uniform across the scale, meaning that respondents reported happiness levels that are quite evenly distributed from low to high. This uniformity is somewhat unusual for a subjective well-being measure, which often shows skewed or clustered patterns in real-world data. The absence of extreme outliers is also notable. Overall, this pattern raises questions about how the happiness scores were generated or categorized—whether the respondents truly felt evenly distributed levels of happiness, or if the data collection process or scale used may have led to artificial uniformity.</p>
+</section>
+<section id="screen-time-per-day-hours" class="level3">
+<h3 class="anchored" data-anchor-id="screen-time-per-day-hours">2. Screen Time per Day (Hours)</h3>
+<p><strong>Check for unusual values</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># since one day has 24 hours and the number of hours cannot be negative </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>unusual_screen_time <span class="ot">&lt;-</span> MHL_train <span class="sc">|&gt;</span> <span class="fu">filter</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span><span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> <span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">24</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>unusual_screen_time</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 12
+# ℹ 12 variables: Country &lt;chr&gt;, Age &lt;dbl&gt;, Gender &lt;chr&gt;, Exercise Level &lt;chr&gt;,
+#   Diet Type &lt;chr&gt;, Sleep Hours &lt;dbl&gt;, Stress Level &lt;chr&gt;,
+#   Mental Health Condition &lt;chr&gt;, Work Hours per Week &lt;dbl&gt;,
+#   Screen Time per Day (Hours) &lt;dbl&gt;, Social Interaction Score &lt;dbl&gt;,
+#   Happiness Score &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Then, there is no extreme values — all screen times fall between 0 and 24.</p>
+<p><strong>Summary statistics</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>MHL_train <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_total =</span> <span class="fu">n</span>(),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_missing =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>)),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>, <span class="fl">0.25</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">median</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>, <span class="fl">0.75</span>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max =</span> <span class="fu">max</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>),</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">IQR =</span> <span class="fu">IQR</span>(<span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  num_total num_missing   min    Q1 median    Q3   max  mean    sd   IQR
+      &lt;int&gt;       &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1      2400           0     2   3.5    5.1   6.6     8  5.08  1.75   3.1</code></pre>
+</div>
+</div>
+<p><strong>Visualization</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> MHL_train, </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> <span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">center =</span> <span class="dv">5</span>, <span class="at">binwidth =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Screen Time per Day"</span>, <span class="at">x =</span> <span class="st">"Screen Time per Day (Hours)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation:</strong> Screen time per day ranges from 2 to 8 hours, with an average of around 5.08 hours. The data seems evenly spread out across this range, with no extreme values. However, this even distribution is unusual and may suggest that the data was collected in a way that limited the variety of screen time reported. For example, the data might have been grouped into specific time ranges (like 2 to 3 hours, 4 to 5 hours, etc.), which could explain why there are no values below 2 hours or above 8 hours. Normally, we’d expect more variation in screen time, so this pattern might point to how the data was recorded or categorized.</p>
+</section>
+<section id="sleep-hours" class="level3">
+<h3 class="anchored" data-anchor-id="sleep-hours">3. Sleep Hours</h3>
+<p><strong>Check for unusual values</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># since one day has 24 hours and the number of hours cannot be negative </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>unusual_sleep <span class="ot">&lt;-</span> MHL_train <span class="sc">|&gt;</span> <span class="fu">filter</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span><span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> <span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">24</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>unusual_sleep</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 12
+# ℹ 12 variables: Country &lt;chr&gt;, Age &lt;dbl&gt;, Gender &lt;chr&gt;, Exercise Level &lt;chr&gt;,
+#   Diet Type &lt;chr&gt;, Sleep Hours &lt;dbl&gt;, Stress Level &lt;chr&gt;,
+#   Mental Health Condition &lt;chr&gt;, Work Hours per Week &lt;dbl&gt;,
+#   Screen Time per Day (Hours) &lt;dbl&gt;, Social Interaction Score &lt;dbl&gt;,
+#   Happiness Score &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Then, there is no invalid sleep durations — all values fall within a realistic 0–24 hour range.</p>
+<p><strong>Summary statistics</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>MHL_train <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_total =</span> <span class="fu">n</span>(),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_missing =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>)),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>, <span class="fl">0.25</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">median</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>, <span class="fl">0.75</span>),</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max =</span> <span class="fu">max</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>),</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>),</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>),</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">IQR =</span> <span class="fu">IQR</span>(<span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  num_total num_missing   min    Q1 median    Q3   max  mean    sd   IQR
+      &lt;int&gt;       &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1      2400           0   1.4   5.5    6.5   7.5  11.3  6.49  1.49     2</code></pre>
+</div>
+</div>
+<p><strong>Visualization</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> MHL_train, </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> <span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">center =</span> <span class="dv">6</span>, <span class="at">binwidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Sleep Hours"</span>, <span class="at">x =</span> <span class="st">"Sleep Hours"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation:</strong> Sleep hours range from about 1.4 to 11.3 hours, with an average of approximately 6.5 hours. Most people sleep between 5.5 and 7.5 hours, which centers around the recommended 7–8 hours of sleep per night. The distribution has a bell-shaped curve, which is typical for sleep data. There are no extreme outliers, and the spread seems reasonable. This suggests that the sleep data is likely realistic and reflects a natural variation in how long people sleep.</p>
+</section>
+<section id="relationship-between-lifestyle-and-happiness" class="level3">
+<h3 class="anchored" data-anchor-id="relationship-between-lifestyle-and-happiness">4. Relationship between Lifestyle and Happiness</h3>
+<p><strong>a) Screen Time vs Happiness</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> MHL_train,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>         )</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>       ) <span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Screen Time per Day (Hours) vs. Happiness Score"</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="at">x =</span> <span class="st">"Screen Time per Day (Hours)"</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="at">y =</span> <span class="st">"Happiness Score"</span>) <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Scatterplot Interpretation:</strong></p>
+<p>The scatterplot shows that happiness scores are fairly spread out across all levels of screen time. There is no clear upward or downward trend, although the smoothed line suggests a slight dip in happiness at moderate screen time levels, followed by a small increase. Overall, no strong pattern emerges.</p>
+<p><strong>Correlation Analysis:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(MHL_train<span class="sc">$</span><span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>, MHL_train<span class="sc">$</span><span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.04427989</code></pre>
+</div>
+</div>
+<p>The correlation coefficient is approximately <strong>0.044</strong>, indicating a <strong>very weak positive linear relationship</strong> between screen time and happiness. This supports the visual observation that screen time, at least on its own, does not have a meaningful impact on happiness in this dataset.</p>
+<p><strong>Conclusion:</strong></p>
+<p>There appears to be <strong>no significant relationship</strong> between screen time and happiness score. People with both low and high screen time report a wide range of happiness scores, and the slight trends in the data are not strong enough to suggest a real pattern. That means, screen time might still play a role when combined with other factors like sleep or stress. To get a better understanding of what influences happiness, it will be helpful to look at other lifestyle habits such as Sleep Hours.</p>
+<p><strong>b) Sleep Hours vs Happiness</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> MHL_train,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>         )</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>       ) <span class="sc">+</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Sleep Hours vs. Happiness Score"</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="at">x =</span> <span class="st">"Sleep Hours"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="at">y =</span> <span class="st">"Happiness Score"</span>) <span class="sc">+</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Scatterplot Interpretation:</strong></p>
+<p>The scatter plot shows only a <strong>very weak and non-linear relationship</strong> between sleep hours and happiness scores. Most participants reported sleeping between 5.5 and 7.5 hours, and their happiness scores generally fall between 4 and 7. The trend line suggests that people who sleep extremely little or a lot aren’t necessarily less happy, but they also aren’t much happier either.</p>
+<p><strong>Correlation Analysis:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(MHL_train<span class="sc">$</span><span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>, MHL_train<span class="sc">$</span><span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.00852507</code></pre>
+</div>
+</div>
+<p>The correlation coefficient is <strong>0.0085</strong>, which is extremely close to zero. This confirms that there’s essentially <strong>no linear relationship</strong> between sleep and happiness in this dataset.</p>
+<p><strong>Conclusion:</strong></p>
+<p>The effect of sleep hours on happiness score is very small. This suggests that <strong>sleep alone likely doesn’t play a major role</strong> in determining happiness — though it could interact with other factors like stress, screen time, or social interaction.</p>
+<p>The exploratory analysis suggests that neither <strong>screen time</strong> nor <strong>sleep hours</strong> individually show a strong relationship with <strong>happiness score</strong>. To better understand what drives happiness, we now turn to <strong>modeling</strong>, where we will consider <strong>multiple lifestyle variables</strong> together. By using statistical and machine learning techniques, such as <strong>LASSO regression</strong>, we can identify which predictors are most influential and how they interact to impact happiness.</p>
+</section>
+</section>
+<section id="modeling" class="level2">
+<h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>(<span class="at">mode =</span> <span class="st">"regression"</span>,</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">engine =</span> <span class="st">"glmnet"</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">penalty =</span> <span class="fu">tune</span>(),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="at">mixture =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>lasso_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span> <span class="sc">~</span> .,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> MHL_train</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>lasso_wflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lasso_model) <span class="sc">|&gt;</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(lasso_recipe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>MHL_folds<span class="ot">&lt;-</span><span class="fu">vfold_cv</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  MHL_train,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">v=</span><span class="dv">10</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>lasso_grid<span class="ot">&lt;-</span><span class="fu">grid_regular</span>(<span class="fu">penalty</span>(), <span class="at">levels =</span> <span class="dv">200</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>lasso_tune<span class="ot">&lt;-</span><span class="fu">tune_grid</span>(lasso_model,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>                      lasso_recipe,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>                      <span class="at">resamples=</span> MHL_folds,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>                      <span class="at">grid=</span> lasso_grid,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">metrics=</span> <span class="fu">metric_set</span>(rmse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>lasso_tune<span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span> <span class="st">"rmse"</span>)<span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span> penalty,<span class="at">y=</span>mean)) <span class="sc">+</span> <span class="fu">geom_point</span>()<span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span> penalty,<span class="at">xend=</span> penalty, <span class="at">y=</span> mean<span class="sc">+</span> std_err,<span class="at">yend=</span> mean<span class="sc">-</span>std_err)) <span class="sc">+</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_x_log10</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>lasso_min <span class="ot">&lt;-</span> lasso_tune <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">metric =</span> <span class="st">"rmse"</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>lasso_best_1se <span class="ot">&lt;-</span> lasso_tune <span class="sc">|&gt;</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_by_one_std_err</span>(</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">metric =</span> <span class="st">"rmse"</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">desc</span>(penalty) </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>lasso_min</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  penalty .config               
+    &lt;dbl&gt; &lt;chr&gt;                 
+1  0.0554 Preprocessor1_Model175</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>lasso_wflow_final <span class="ot">&lt;-</span> lasso_wflow <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(<span class="at">parameters =</span> lasso_min)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>lasso_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(lasso_wflow_final,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> MHL_train)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>lasso_predict <span class="ot">&lt;-</span> <span class="fu">augment</span>(lasso_fit,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">new_data =</span> MHL_test</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>lasso_predict <span class="sc">|&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">truth =</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> .pred</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        2.60</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>lasso_coef <span class="ot">&lt;-</span> lasso_fit <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>()</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>lasso_coef <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">abs</span>(estimate)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 26 × 3
+   term                         estimate penalty
+   &lt;chr&gt;                           &lt;dbl&gt;   &lt;dbl&gt;
+ 1 (Intercept)                  5.40      0.0554
+ 2 Diet Type_Vegetarian         0.0621    0.0554
+ 3 Social Interaction Score    -0.0606    0.0554
+ 4 Screen Time per Day (Hours)  0.0573    0.0554
+ 5 Exercise Level_Low          -0.0567    0.0554
+ 6 Country_Japan               -0.0259    0.0554
+ 7 Country_Canada               0.00118   0.0554
+ 8 Gender_Male                  0.000262  0.0554
+ 9 Age                          0         0.0554
+10 Sleep Hours                  0         0.0554
+# ℹ 16 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span> <span class="sc">~</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Diet Type</span><span class="st">`</span> <span class="sc">+</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Social Interaction Score</span><span class="st">`</span> <span class="sc">+</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Screen Time per Day (Hours)</span><span class="st">`</span> <span class="sc">+</span> </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Exercise Level</span><span class="st">`</span> <span class="sc">+</span> </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Country</span><span class="st">`</span> <span class="sc">+</span> </span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Gender</span><span class="st">`</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> MHL_train)  </span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>conf_intervals <span class="ot">&lt;-</span> <span class="fu">confint</span>(lm_model, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>conf_intervals</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                     2.5 %       97.5 %
+(Intercept)                    4.997113620  6.070873945
+`Diet Type`Junk Food          -0.221973229  0.406008192
+`Diet Type`Keto               -0.367307125  0.276860576
+`Diet Type`Vegan              -0.350542466  0.294138683
+`Diet Type`Vegetarian         -0.027753982  0.615275392
+`Social Interaction Score`    -0.086451628 -0.006668924
+`Screen Time per Day (Hours)`  0.006735754  0.123273911
+`Exercise Level`Low           -0.578269429 -0.078115894
+`Exercise Level`Moderate      -0.439291666  0.065648209
+CountryBrazil                 -0.588142151  0.192580062
+CountryCanada                 -0.400780960  0.360805223
+CountryGermany                -0.548976039  0.237555982
+CountryIndia                  -0.616148910  0.158268547
+CountryJapan                  -0.737865428  0.036165263
+CountryUSA                    -0.596192652  0.166992208
+GenderMale                    -0.100042675  0.399369053
+GenderOther                   -0.181244954  0.315859637</code></pre>
+</div>
+</div>
+<p><strong>Modeling Summary</strong></p>
+<p>To predict happiness scores, I used LASSO regression, which is effective for both regularization and feature selection. LASSO adds a penalty to the regression loss function, shrinking less important coefficients to zero, which simplifies the model and reduces overfitting. I used 10-fold cross-validation on the training data and tuned the penalty parameter over 200 values using RMSE (Root Mean Squared Error) as the performance metric.</p>
+<p>After fitting the LASSO model, 8 predictors were selected with non-zero coefficients. However, when fitting a standard linear regression model to evaluate statistical significance, only 3 variables — <strong>Social Interaction Score</strong> (−0.061), <strong>Screen Time per Day (Hours)</strong> (0.057), and <strong>Exercise Level (Low)</strong> (−0.057) — had 95% confidence intervals that did not include zero, suggesting a more reliable relationship with happiness.</p>
+<p>The RMSE of the final LASSO model on the test set was <strong>2.60</strong>, indicating moderate predictive accuracy on a scale where happiness scores range from 1 to 10.</p>
+</section>
+<section id="insights" class="level2">
+<h2 class="anchored" data-anchor-id="insights">Insights</h2>
+<section id="limitations-and-future-work" class="level3">
+<h3 class="anchored" data-anchor-id="limitations-and-future-work">Limitations and Future Work</h3>
+</section>
+<section id="reflection-optional-subsection" class="level3">
+<h3 class="anchored" data-anchor-id="reflection-optional-subsection">Reflection (Optional Subsection)</h3>
+
+
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

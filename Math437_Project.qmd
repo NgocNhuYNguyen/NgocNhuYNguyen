@@ -1,1 +1,506 @@
-This page will contain my Math 437 final project.
+---
+title: "Predicting Happiness from Lifestyle and Mental Health Factors"
+---
+
+## Motivation and Context
+
+```{r}
+#| label: do this first
+#| echo: false
+#| message: false
+
+here::i_am("Math437_Project.qmd")
+```
+
+Mental health is one of the most important parts of a person’s overall well-being. One way to measure how people feel is by looking at their **happiness**—a key part of mental health. This project looks at how daily habits like diet, exercise, sleep, and screen time, as well as mental health conditions like anxiety or depression, might affect how happy people feel.
+
+This topic matters to me because I believe small lifestyle changes can make a big difference in how we feel each day. If we can find out which habits or health conditions have the strongest connection to happiness, people can make better decisions for their own well-being. This research could also be useful for doctors, therapists, teachers, and public health leaders who want to help others feel happier and healthier.
+
+To follow along with this analysis, it helps to understand a few key terms:
+
+### Diet Types
+
+- **Vegetarian**: Doesn’t include meat but may include dairy or eggs.
+- **Vegan**: Doesn’t include any animal products, including dairy, eggs, or honey.
+- **Balanced diet**: Includes a mix of healthy foods like fruits, vegetables, proteins, grains, and fats.
+- **Keto**: A low-carb, high-fat diet that helps the body burn fat instead of sugar for energy.
+- **Junk food**: Foods that are highly processed and full of sugar or unhealthy fats, like fast food and soda.
+
+### Mental Health Conditions
+
+- **PTSD**: A condition that can happen after a scary or traumatic event, causing flashbacks or anxiety.
+- **Depression**: A condition where a person feels very sad, hopeless, and loses interest in things they used to enjoy.
+- **Anxiety**: Strong feelings of worry or fear that can get in the way of daily life.
+- **Bipolar disorder**: A condition where a person’s mood swings between extreme highs (called mania) and deep lows (depression).
+
+Many scientists and health experts believe there is a strong connection between lifestyle, mental health, and happiness. For example, getting regular exercise can boost mood, while poor sleep or high stress can make people feel worse. This project will explore those connections and try to figure out which habits and conditions are most related to how happy someone feels.
+
+## Main Objective
+
+The main goal of this project is to **predict a person’s happiness score** based on their lifestyle habits and mental health conditions.
+
+By analyzing the “Mental Health and Lifestyle Habits Dataset (2019–2024),” I aim to identify which factors—such as diet, exercise, sleep, screen time, and existing mental health conditions—are most strongly associated with happiness. To do this, I will use a statistical modeling technique called **LASSO regression**, which not only builds a predictive model but also helps select the most important variables from the data.
+
+Ultimately, the objective is to better understand how everyday choices and psychological well-being are linked to happiness, and to provide insights that could help individuals and professionals support mental health more effectively.
+
+## Packages Used In This Analysis
+
+```{r}
+#| label: load packages
+#| message: false
+#| warning: false
+
+library(here)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(rsample)
+library(naniar)
+library(tidymodels)
+library(glmnet)
+library(selectiveInference)
+```
+
+
+| Package | Use |
+|-------------------------------|----------------------------------------|
+| [here](https://github.com/jennybc/here_here) | to easily load and save data |
+| [readr](https://readr.tidyverse.org/) | to import the CSV file data |
+| [dplyr](https://dplyr.tidyverse.org/) | to massage and summarize data |
+| [rsample](https://rsample.tidymodels.org/) | to split data into training and test sets |
+| [ggplot2](https://ggplot2.tidyverse.org/) | to create nice-looking and informative graphs |
+| [naniar](https://naniar.njtierney.com/)	| to summarize and visualize missing data
+
+## Data Description
+
+The dataset used in this project is titled **"Mental Health and Lifestyle Habits (2019–2024)"**, and it was created to explore the relationship between people's lifestyle choices and their mental well-being. The data was collected from individuals around the world between 2019 and 2024 using online surveys and self-reported questionnaires.
+
+The dataset was uploaded to Kaggle by **Atharva Soundankar** in 2025 and is publicly available for analysis. You can access it at the following link:  
+[Soundankar, Atharva. *Mental Health and Lifestyle Habits (2019–2024)*. Kaggle, 2025](https://www.kaggle.com/datasets/atharvasoundankar/mental-health-and-lifestyle-habits-2019-2024/data)
+
+This dataset includes 12 variables:
+
+| Variable                        | Type   | Description                                                                 |
+|---------------------------------|--------|-----------------------------------------------------------------------------|
+| `Country`                       | chr    | The respondent’s country of residence                                       |
+| `Age`                           | dbl    | Age of the respondent (in years)                                            |
+| `Gender`                        | chr    | Gender identity of the respondent                                           |
+| `Exercise Level`               | chr    | Frequency or intensity of physical activity (e.g., low, moderate, high)     |
+| `Diet Type`                    | chr    | Type of diet (e.g., vegetarian, vegan, balanced, keto, junk food)           |
+| `Sleep Hours`                  | dbl    | Average number of hours of sleep per day                                    |
+| `Stress Level`                 | chr    | Self-reported stress level (e.g., low, moderate, high)                        |
+| `Mental Health Condition`      | chr    | Any diagnosed mental health condition (e.g., anxiety, depression, PTSD)     |
+| `Work Hours per Week`          | dbl    | Number of hours worked per week                                             |
+| `Screen Time per Day (Hours)`  | dbl    | Average number of hours spent looking at screens each day                   |
+| `Social Interaction Score`     | dbl    | Self-rated score of social connection or engagement on scale (1–10)                        |
+| `Happiness Score`              | dbl    | Self-reported happiness score on scale (1–10)    |
+
+These variables provide a mix of **demographic**, **behavioral**, and **psychological** information that allows us to investigate how different aspects of daily life and mental health may influence a person’s overall happiness.
+
+```{r}
+#| label: import data
+#| message: false
+#| warning: false
+
+Mental.Health.Lifestyle <- read_csv("Mental_Health_Lifestyle_Dataset.csv")
+head(Mental.Health.Lifestyle)
+```
+
+### Data Limitations
+
+Although the "Mental Health and Lifestyle Habits Dataset (2019–2024)" is useful for practicing data analysis and modeling, it has several problems that we should keep in mind:
+
+**The data is self-reported:**
+
+All the information in this dataset comes from people filling out surveys about themselves. This means there is no way to check if what they reported is accurate. People might overestimate healthy habits (like saying they exercise more than they do) or underestimate unhealthy ones (like not getting enough sleep). They might also give answers they think are more socially acceptable instead of being completely honest. This can make the data less reliable.
+
+**Some variables are unclear or inconsistent:**
+
+Some of the questions in the dataset are vague or not measured well. For example:
+
+"Stress Level" is said to be on a 1–10 scale, but the data uses categories like "Low," "Moderate," and "High," which doesn’t match.
+
+"Exercise Level" is just labeled as "Low," "Moderate," or "High," but it doesn’t tell us how often or how intensely people exercise.
+
+The "Mental Health Condition" column includes things like depression and anxiety, but it doesn’t explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.
+
+**Some data is missing or unclear:**
+
+For example, the "Gender" column includes a large number of people marked as "Other," but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it’s hard to use this information meaningfully.
+
+**The results might not apply to everyone:**
+
+The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we don’t know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.
+
+Because of these issues, we should treat this dataset more like a practice dataset—similar to examples used in class—rather than something that gives real-world, trustworthy results. It’s still helpful for learning how to explore data and build models, but the results should not be taken as scientifically accurate.
+
+## Data Wrangling (Optional Section)
+
+The dataset I imported is already in a tidy format, meaning each row represents one observation and each column represents a variable. Therefore, no structural reshaping of the data was required.
+
+However, to build and evaluate a predictive model effectively, it is essential to split the data into two parts: a **training set** and a **test set**. The training set (80% of the data) will be used to build the model and identify relationships between predictor variables—such as lifestyle habits and demographic characteristics—and the response variable, which is the **Happiness Score**. The test set (20% of the data) is held out and used to assess how well the model performs on new, unseen data.
+
+This kind of split is important because it prevents overfitting and helps evaluate how well the model will generalize in real-world applications. The 80/20 ratio is a standard practice that strikes a balance between having enough data to train the model and reserving enough to test it meaningfully. To ensure reproducibility of the results, a random seed was set.
+
+```{r}
+ set.seed(123)
+ n <- nrow(Mental.Health.Lifestyle)
+ train_indices <- sample(n, size = floor(0.8*n))
+ MHL_train <- Mental.Health.Lifestyle[train_indices,]
+ MHL_test <- Mental.Health.Lifestyle[-train_indices,]
+```
+
+### Handling Missing Data
+
+Before proceeding with modeling or analysis, it’s important to check for any missing data. Identifying missing values early allows us to decide whether to impute (fill in), remove, or otherwise handle them to avoid bias or errors.
+
+```{r}
+#| label: check-missing
+#| message: false
+#| warning: false
+
+library(naniar)
+miss_var_summary(Mental.Health.Lifestyle)
+```
+
+After running the code, there are no missing values in any of the columns. This simplifies the data preparation process, as no imputation or data cleaning for missing values is currently required.
+
+## Exploratory Data Analysis
+
+My objective is to understand how lifestyle factors may influence an individual’s overall happiness, specifically focusing on how **screen time** and **sleep hours** might relate to the **happiness score**. Since I have not yet conducted feature selection (e.g., via LASSO), I do not know which predictors are statistically most important. However, based on intuition and prior research, I initially suspect that **screen time per day** and **sleep hours** could play a meaningful role in predicting happiness.
+
+This section explores three key variables:
+
+- `Happiness Score` (the response variable)
+
+- `Screen Time per Day (Hours)` (a potentially important predictor)
+
+- `Sleep Hours` (a potentially important predictor)
+
+The following analysis examines the distributions of these variables, checks for unusual or problematic values, and begins to explore their relationships to guide future modeling.
+
+### 1. Happiness Score (Response Variable)
+
+**Check for unusual values**
+
+```{r}
+#| message: false
+#| warning: false
+# since `Happiness Score` is on the scale 1 - 10
+unusual_happiness <- MHL_train |> filter(`Happiness Score` < 1 | `Happiness Score` > 10)
+unusual_happiness
+```
+
+Then, there is no unusual values — all scores fall between 1 and 10, as expected.
+
+**Summary statistics**
+
+```{r}
+MHL_train |>
+  summarize(
+    num_total = n(), 
+    num_missing = sum(is.na(`Happiness Score`)), 
+    min = min(`Happiness Score`, na.rm = TRUE),
+    Q1 = quantile(`Happiness Score`, 0.25),
+    median = median(`Happiness Score`),
+    Q3 = quantile(`Happiness Score`, 0.75),
+    max = max(`Happiness Score`),
+    mean = mean(`Happiness Score`),
+    sd = sd(`Happiness Score`),
+    IQR = IQR(`Happiness Score`)
+  )
+```
+
+**Visualization**
+
+```{r}
+ggplot(data = MHL_train, 
+        mapping = aes(
+          x = `Happiness Score`
+          )
+        ) + 
+geom_histogram(center = 5, binwidth = 0.4) +
+labs(title = "Histogram of Happiness Score", x = "Happiness Score")
+```
+
+**Interpretation:**
+
+The happiness scores range from 1 to 10, with an average (mean) of approximately 5.4 and a standard deviation of about 2.55. The distribution appears fairly spread out and roughly uniform across the scale, meaning that respondents reported happiness levels that are quite evenly distributed from low to high. This uniformity is somewhat unusual for a subjective well-being measure, which often shows skewed or clustered patterns in real-world data. The absence of extreme outliers is also notable. Overall, this pattern raises questions about how the happiness scores were generated or categorized—whether the respondents truly felt evenly distributed levels of happiness, or if the data collection process or scale used may have led to artificial uniformity.
+
+### 2. Screen Time per Day (Hours)
+
+**Check for unusual values**
+
+```{r}
+#| message: false
+#| warning: false
+ # since one day has 24 hours and the number of hours cannot be negative 
+unusual_screen_time <- MHL_train |> filter(
+  `Screen Time per Day (Hours)`< 0 | `Screen Time per Day (Hours)` > 24)
+unusual_screen_time
+```
+
+Then, there is no extreme values — all screen times fall between 0 and 24.
+
+**Summary statistics**
+
+```{r}
+MHL_train |>
+  summarize(
+    num_total = n(),
+    num_missing = sum(is.na(`Screen Time per Day (Hours)`)),
+    min = min(`Screen Time per Day (Hours)`),
+    Q1 = quantile(`Screen Time per Day (Hours)`, 0.25),
+    median = median(`Screen Time per Day (Hours)`),
+    Q3 = quantile(`Screen Time per Day (Hours)`, 0.75),
+    max = max(`Screen Time per Day (Hours)`),
+    mean = mean(`Screen Time per Day (Hours)`),
+    sd = sd(`Screen Time per Day (Hours)`),
+    IQR = IQR(`Screen Time per Day (Hours)`)
+  )
+```
+
+**Visualization**
+
+```{r}
+ggplot(data = MHL_train, 
+        mapping = aes(
+          x = `Screen Time per Day (Hours)`
+          )
+        ) + 
+geom_histogram(center = 5, binwidth = 0.3) +
+labs(title = "Histogram of Screen Time per Day", x = "Screen Time per Day (Hours)")
+```
+
+**Interpretation:**
+Screen time per day ranges from 2 to 8 hours, with an average of around 5.08 hours. The data seems evenly spread out across this range, with no extreme values. However, this even distribution is unusual and may suggest that the data was collected in a way that limited the variety of screen time reported. For example, the data might have been grouped into specific time ranges (like 2 to 3 hours, 4 to 5 hours, etc.), which could explain why there are no values below 2 hours or above 8 hours. Normally, we’d expect more variation in screen time, so this pattern might point to how the data was recorded or categorized.
+
+### 3. Sleep Hours
+
+**Check for unusual values**
+
+```{r}
+#| message: false
+#| warning: false
+# since one day has 24 hours and the number of hours cannot be negative 
+unusual_sleep <- MHL_train |> filter(
+  `Sleep Hours`< 0 | `Sleep Hours` > 24)
+unusual_sleep
+```
+
+Then, there is no invalid sleep durations — all values fall within a realistic 0–24 hour range.
+
+**Summary statistics**
+
+```{r}
+MHL_train |>
+  summarize(
+    num_total = n(),
+    num_missing = sum(is.na(`Sleep Hours`)),
+    min = min(`Sleep Hours`),
+    Q1 = quantile(`Sleep Hours`, 0.25),
+    median = median(`Sleep Hours`),
+    Q3 = quantile(`Sleep Hours`, 0.75),
+    max = max(`Sleep Hours`),
+    mean = mean(`Sleep Hours`),
+    sd = sd(`Sleep Hours`),
+    IQR = IQR(`Sleep Hours`)
+  )
+```
+
+**Visualization**
+
+```{r}
+ggplot(data = MHL_train, 
+        mapping = aes(
+          x = `Sleep Hours`
+          )
+        ) + 
+geom_histogram(center = 6, binwidth = 0.4) +
+labs(title = "Histogram of Sleep Hours", x = "Sleep Hours")
+```
+
+**Interpretation:**
+Sleep hours range from about 1.4 to 11.3 hours, with an average of approximately 6.5 hours. Most people sleep between 5.5 and 7.5 hours, which centers around the recommended 7–8 hours of sleep per night. The distribution has a bell-shaped curve, which is typical for sleep data. There are no extreme outliers, and the spread seems reasonable. This suggests that the sleep data is likely realistic and reflects a natural variation in how long people sleep.
+
+### 4. Relationship between Lifestyle and Happiness
+
+**a) Screen Time vs Happiness**
+
+```{r}
+#| message: false
+#| warning: false
+ggplot(data = MHL_train,
+       mapping = aes(
+         x = `Screen Time per Day (Hours)`,
+         y = `Happiness Score`
+         )
+       ) +
+geom_point(size = 0.8) +
+labs(title = "Screen Time per Day (Hours) vs. Happiness Score",
+x = "Screen Time per Day (Hours)",
+y = "Happiness Score") +
+geom_smooth(method = "loess", se = FALSE)
+```
+
+**Scatterplot Interpretation:**
+
+The scatterplot shows that happiness scores are fairly spread out across all levels of screen time. There is no clear upward or downward trend, although the smoothed line suggests a slight dip in happiness at moderate screen time levels, followed by a small increase. Overall, no strong pattern emerges.
+
+**Correlation Analysis:**
+
+```{r}
+cor(MHL_train$`Happiness Score`, MHL_train$`Screen Time per Day (Hours)`)
+```
+
+The correlation coefficient is approximately **0.044**, indicating a **very weak positive linear relationship** between screen time and happiness. This supports the visual observation that screen time, at least on its own, does not have a meaningful impact on happiness in this dataset.
+
+**Conclusion:**
+
+There appears to be **no significant relationship** between screen time and happiness score. People with both low and high screen time report a wide range of happiness scores, and the slight trends in the data are not strong enough to suggest a real pattern. That means, screen time might still play a role when combined with other factors like sleep or stress. To get a better understanding of what influences happiness, it will be helpful to look at other lifestyle habits such as Sleep Hours.
+
+**b) Sleep Hours vs Happiness**
+
+```{r}
+#| message: false
+#| warning: false
+ggplot(data = MHL_train,
+       mapping = aes(
+         x = `Sleep Hours`,
+         y = `Happiness Score`
+         )
+       ) +
+geom_point(size = 0.8) +
+labs(title = "Sleep Hours vs. Happiness Score",
+x = "Sleep Hours",
+y = "Happiness Score") +
+geom_smooth(method = "loess", se = FALSE)
+```
+
+**Scatterplot Interpretation:**
+
+The scatter plot shows only a **very weak and non-linear relationship** between sleep hours and happiness scores. Most participants reported sleeping between 5.5 and 7.5 hours, and their happiness scores generally fall between 4 and 7. The trend line suggests that people who sleep extremely little or a lot aren’t necessarily less happy, but they also aren’t much happier either.
+
+**Correlation Analysis:**
+
+```{r}
+cor(MHL_train$`Happiness Score`, MHL_train$`Sleep Hours`)
+```
+
+The correlation coefficient is **0.0085**, which is extremely close to zero. This confirms that there’s essentially **no linear relationship** between sleep and happiness in this dataset.
+
+**Conclusion:**
+
+The effect of sleep hours on happiness score is very small. This suggests that **sleep alone likely doesn’t play a major role** in determining happiness — though it could interact with other factors like stress, screen time, or social interaction.
+
+The exploratory analysis suggests that neither **screen time** nor **sleep hours** individually show a strong relationship with **happiness score**. To better understand what drives happiness, we now turn to **modeling**, where we will consider **multiple lifestyle variables** together. By using statistical and machine learning techniques, such as **LASSO regression**, we can identify which predictors are most influential and how they interact to impact happiness.
+
+## Modeling
+
+```{r}
+lasso_model <- linear_reg(mode = "regression",
+engine = "glmnet",
+penalty = tune(),
+mixture = 1)
+```
+
+```{r}
+lasso_recipe <- recipe(
+  `Happiness Score` ~ .,
+  data = MHL_train
+  ) |>
+  step_dummy(all_nominal_predictors()) |>
+  step_normalize(all_numeric_predictors())
+lasso_wflow <- workflow() |>
+  add_model(lasso_model) |>
+  add_recipe(lasso_recipe)
+```
+
+```{r}
+set.seed(1234)
+MHL_folds<-vfold_cv(
+  MHL_train,
+  v=10
+  )
+lasso_grid<-grid_regular(penalty(), levels = 200)
+lasso_tune<-tune_grid(lasso_model,
+                      lasso_recipe,
+                      resamples= MHL_folds,
+                      grid= lasso_grid,
+                      metrics= metric_set(rmse))
+```
+
+```{r}
+lasso_tune|>
+  collect_metrics() |>
+  filter(.metric== "rmse")|>
+  ggplot(mapping = aes(x= penalty,y=mean)) + geom_point()+ geom_line() +
+  geom_segment(aes(x= penalty,xend= penalty, y= mean+ std_err,yend= mean-std_err)) +
+scale_x_log10()
+```
+
+```{r}
+lasso_min <- lasso_tune |>
+  select_best(
+    metric = "rmse"
+    )
+lasso_best_1se <- lasso_tune |>
+  select_by_one_std_err(
+    metric = "rmse",
+    desc(penalty) 
+    )
+lasso_min
+```
+
+```{r}
+lasso_wflow_final <- lasso_wflow |>
+  finalize_workflow(parameters = lasso_min)
+lasso_fit <- fit(lasso_wflow_final,
+                 data = MHL_train)
+lasso_predict <- augment(lasso_fit,
+                         new_data = MHL_test
+                         )
+```
+
+```{r}
+lasso_predict |>
+  rmse(
+    truth = `Happiness Score`,
+    estimate = .pred
+    )
+```
+
+```{r}
+lasso_coef <- lasso_fit |>
+  broom::tidy()
+lasso_coef |>
+  arrange(desc(abs(estimate)))
+```
+
+```{r}
+lm_model <- lm(`Happiness Score` ~ 
+               `Diet Type` + 
+               `Social Interaction Score` + 
+               `Screen Time per Day (Hours)` + 
+               `Exercise Level` + 
+               `Country` + 
+               `Gender`,
+               data = MHL_train)  
+
+conf_intervals <- confint(lm_model, level = 0.95)
+conf_intervals
+```
+
+**Modeling Summary**
+
+To predict happiness scores, I used LASSO regression, which is effective for both regularization and feature selection. LASSO adds a penalty to the regression loss function, shrinking less important coefficients to zero, which simplifies the model and reduces overfitting. I used 10-fold cross-validation on the training data and tuned the penalty parameter over 200 values using RMSE (Root Mean Squared Error) as the performance metric.
+
+After fitting the LASSO model, 8 predictors were selected with non-zero coefficients. However, when fitting a standard linear regression model to evaluate statistical significance, only 3 variables — **Social Interaction Score** (−0.061), **Screen Time per Day (Hours)** (0.057), and **Exercise Level (Low)** (−0.057) — had 95% confidence intervals that did not include zero, suggesting a more reliable relationship with happiness.
+
+The RMSE of the final LASSO model on the test set was **2.60**, indicating moderate predictive accuracy on a scale where happiness scores range from 1 to 10.
+
+## Insights
+
+### Limitations and Future Work
+
+### Reflection (Optional Subsection)
