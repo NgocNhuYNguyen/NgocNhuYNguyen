@@ -177,7 +177,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#insights" id="toc-insights" class="nav-link" data-scroll-target="#insights">Insights</a>
   <ul class="collapse">
   <li><a href="#limitations-and-future-work" id="toc-limitations-and-future-work" class="nav-link" data-scroll-target="#limitations-and-future-work">Limitations and Future Work</a></li>
-  <li><a href="#reflection-optional-subsection" id="toc-reflection-optional-subsection" class="nav-link" data-scroll-target="#reflection-optional-subsection">Reflection (Optional Subsection)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -212,8 +211,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="diet-types" class="level3">
 <h3 class="anchored" data-anchor-id="diet-types">Diet Types</h3>
 <ul>
-<li><strong>Vegetarian</strong>: Doesn’t include meat but may include dairy or eggs.</li>
-<li><strong>Vegan</strong>: Doesn’t include any animal products, including dairy, eggs, or honey.</li>
+<li><strong>Vegetarian</strong>: Does not include meat but may include dairy or eggs.</li>
+<li><strong>Vegan</strong>: Does not include any animal products, including dairy, eggs, or honey.</li>
 <li><strong>Balanced diet</strong>: Includes a mix of healthy foods like fruits, vegetables, proteins, grains, and fats.</li>
 <li><strong>Keto</strong>: A low-carb, high-fat diet that helps the body burn fat instead of sugar for energy.</li>
 <li><strong>Junk food</strong>: Foods that are highly processed and full of sugar or unhealthy fats, like fast food and soda.</li>
@@ -242,12 +241,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(selectiveInference)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parsnip)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(recipes)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(workflows)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tune)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(yardstick)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dials)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(selectiveInference)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <thead>
@@ -280,6 +285,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td><a href="https://naniar.njtierney.com/">naniar</a></td>
 <td>to summarize and visualize missing data</td>
+</tr>
+<tr class="odd">
+<td><a href="https://parsnip.tidymodels.org/">parsnip</a></td>
+<td>to define and fit models in a unified framework</td>
+</tr>
+<tr class="even">
+<td><a href="https://recipes.tidymodels.org/">recipes</a></td>
+<td>to preprocess data through feature engineering steps</td>
+</tr>
+<tr class="odd">
+<td><a href="https://workflows.tidymodels.org/">workflows</a></td>
+<td>to combine preprocessing and modeling into a single object</td>
+</tr>
+<tr class="even">
+<td><a href="https://tune.tidymodels.org/">tune</a></td>
+<td>to tune model hyperparameters through resampling</td>
+</tr>
+<tr class="odd">
+<td><a href="https://yardstick.tidymodels.org/">yardstick</a></td>
+<td>to evaluate and compare model performance</td>
+</tr>
+<tr class="even">
+<td><a href="https://dials.tidymodels.org/">dials</a></td>
+<td>to define and generate hyperparameter tuning grids</td>
+</tr>
+<tr class="odd">
+<td><a href="https://glmnet.stanford.edu/">glmnet</a></td>
+<td>to fit regularized linear models like LASSO and Ridge</td>
+</tr>
+<tr class="even">
+<td><a href="https://cran.r-project.org/package=selectiveInference">selectiveInference</a></td>
+<td>to compute post-selection inference for LASSO models</td>
+</tr>
+<tr class="odd">
+<td><a href="https://broom.tidymodels.org/">broom</a></td>
+<td>to convert model outputs into tidy tibbles</td>
 </tr>
 </tbody>
 </table>
@@ -392,13 +433,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>All the information in this dataset comes from people filling out surveys about themselves. This means there is no way to check if what they reported is accurate. People might overestimate healthy habits (like saying they exercise more than they do) or underestimate unhealthy ones (like not getting enough sleep). They might also give answers they think are more socially acceptable instead of being completely honest. This can make the data less reliable.</p>
 <p><strong>Some variables are unclear or inconsistent:</strong></p>
 <p>Some of the questions in the dataset are vague or not measured well. For example:</p>
-<p>“Stress Level” is said to be on a 1–10 scale, but the data uses categories like “Low,” “Moderate,” and “High,” which doesn’t match.</p>
+<p>“Stress Level” is said to be on a 1–10 scale in the Kaggle dataset’s description, but the data uses categories like “Low,” “Moderate,” and “High,” which does not match.</p>
 <p>“Exercise Level” is just labeled as “Low,” “Moderate,” or “High,” but it doesn’t tell us how often or how intensely people exercise.</p>
 <p>The “Mental Health Condition” column includes things like depression and anxiety, but it doesn’t explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.</p>
 <p><strong>Some data is missing or unclear:</strong></p>
-<p>For example, the “Gender” column includes a large number of people marked as “Other,” but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it’s hard to use this information meaningfully.</p>
+<p>For example, the “Gender” column includes a large number of people marked as “Other,” but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it is hard to use this information meaningfully.</p>
 <p><strong>The results might not apply to everyone:</strong></p>
-<p>The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we don’t know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.</p>
+<p>The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we do not know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.</p>
 <p>Because of these issues, we should treat this dataset more like a practice dataset—similar to examples used in class—rather than something that gives real-world, trustworthy results. It’s still helpful for learning how to explore data and build models, but the results should not be taken as scientifically accurate.</p>
 </section>
 </section>
@@ -418,8 +459,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="handling-missing-data">Handling Missing Data</h3>
 <p>Before proceeding with modeling or analysis, it’s important to check for any missing data. Identifying missing values early allows us to decide whether to impute (fill in), remove, or otherwise handle them to avoid bias or errors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">miss_var_summary</span>(Mental.Health.Lifestyle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">miss_var_summary</span>(Mental.Health.Lifestyle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12 × 3
    variable                    n_miss pct_miss
@@ -685,7 +725,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p><strong>Scatterplot Interpretation:</strong></p>
-<p>The scatter plot shows only a <strong>very weak and non-linear relationship</strong> between sleep hours and happiness scores. Most participants reported sleeping between 5.5 and 7.5 hours, and their happiness scores generally fall between 4 and 7. The trend line suggests that people who sleep extremely little or a lot aren’t necessarily less happy, but they also aren’t much happier either.</p>
+<p>The scatterplot shows the relationship between sleep hours and happiness score. Although the data points are highly dispersed, a smoothed trend line reveals a subtle non-linear pattern. Specifically, individuals who report very few hours of sleep (e.g., less than 4 hours) tend to have slightly higher happiness scores, but the trend then dips and gradually levels off as sleep duration increases. Overall, the association between sleep and happiness appears weak and inconsistent, suggesting that sleep duration alone does not strongly predict happiness.</p>
 <p><strong>Correlation Analysis:</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(MHL_train<span class="sc">$</span><span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>, MHL_train<span class="sc">$</span><span class="st">`</span><span class="at">Sleep Hours</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -695,18 +735,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The correlation coefficient is <strong>0.0085</strong>, which is extremely close to zero. This confirms that there’s essentially <strong>no linear relationship</strong> between sleep and happiness in this dataset.</p>
 <p><strong>Conclusion:</strong></p>
-<p>The effect of sleep hours on happiness score is very small. This suggests that <strong>sleep alone likely doesn’t play a major role</strong> in determining happiness — though it could interact with other factors like stress, screen time, or social interaction.</p>
+<p>The effect of sleep hours on happiness score is very small. This suggests that <strong>sleep alone likely does not play a major role</strong> in determining happiness — though it could interact with other factors like stress, screen time, or social interaction.</p>
 <p>The exploratory analysis suggests that neither <strong>screen time</strong> nor <strong>sleep hours</strong> individually show a strong relationship with <strong>happiness score</strong>. To better understand what drives happiness, we now turn to <strong>modeling</strong>, where we will consider <strong>multiple lifestyle variables</strong> together. By using statistical and machine learning techniques, such as <strong>LASSO regression</strong>, we can identify which predictors are most influential and how they interact to impact happiness.</p>
 </section>
 </section>
 <section id="modeling" class="level2">
 <h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
+<p>I used <strong>LASSO regression (Least Absolute Shrinkage and Selection Operator)</strong> to model the relationship between lifestyle factors and happiness score. LASSO is particularly useful when we have many predictors, some of which may be irrelevant. It performs both:</p>
+<ul>
+<li><p><strong>Regularization</strong>, to avoid overfitting by penalizing large coefficients</p></li>
+<li><p><strong>Variable selection</strong>, by shrinking some coefficients to exactly zero</p></li>
+</ul>
+<p>This makes the resulting model more interpretable and potentially more generalizable to new data.</p>
+<p><strong>Model Specification and Preprocessing</strong></p>
+<p>I defined a LASSO regression model with a tunable penalty:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>(<span class="at">mode =</span> <span class="st">"regression"</span>,</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">engine =</span> <span class="st">"glmnet"</span>,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">penalty =</span> <span class="fu">tune</span>(),</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="at">mixture =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Then, I created a preprocessing recipe and combined the model and recipe into a workflow:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>lasso_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span> <span class="sc">~</span> .,</span>
@@ -718,6 +767,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lasso_model) <span class="sc">|&gt;</span></span>
 <span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(lasso_recipe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><strong>Cross-Validation and Tuning</strong></p>
+<p>I used 10-fold cross-validation to tune the penalty parameter and tuned the penalty parameter over 200 values:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>MHL_folds<span class="ot">&lt;-</span><span class="fu">vfold_cv</span>(</span>
@@ -731,6 +782,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>                      <span class="at">grid=</span> lasso_grid,</span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">metrics=</span> <span class="fu">metric_set</span>(rmse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>I visualized the tuning results:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>lasso_tune<span class="sc">|&gt;</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
@@ -746,17 +798,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p><strong>Best Model Selection and Fitting</strong></p>
+<p>I selected the penalty with the lowest RMSE (Root Mean Squared Error):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>lasso_min <span class="ot">&lt;-</span> lasso_tune <span class="sc">|&gt;</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">metric =</span> <span class="st">"rmse"</span></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>lasso_best_1se <span class="ot">&lt;-</span> lasso_tune <span class="sc">|&gt;</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_by_one_std_err</span>(</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">metric =</span> <span class="st">"rmse"</span>,</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">desc</span>(penalty) </span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>lasso_min</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>lasso_min</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 2
   penalty .config               
@@ -768,17 +817,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>lasso_wflow_final <span class="ot">&lt;-</span> lasso_wflow <span class="sc">|&gt;</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(<span class="at">parameters =</span> lasso_min)</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>lasso_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(lasso_wflow_final,</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> MHL_train)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>lasso_predict <span class="ot">&lt;-</span> <span class="fu">augment</span>(lasso_fit,</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">new_data =</span> MHL_test</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> MHL_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><strong>Prediction and Model Performance</strong></p>
+<p>I chose <strong>Root Mean Squared Error (RMSE)</strong> as the performance metric because it provides a clear measure of how well the model predicts the <code>Happiness Score</code>, with errors expressed in the same units. RMSE calculates the square root of the average squared differences between predicted and actual values, which penalizes larger errors more heavily. This makes it a useful and interpretable way to evaluate the accuracy of a regression model, especially when predicting a continuous outcome like <code>Happiness Score</code>.</p>
+<p>I evaluated the model on the test set:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>lasso_predict <span class="sc">|&gt;</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">truth =</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>,</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> .pred</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>lasso_predict <span class="ot">&lt;-</span> <span class="fu">augment</span>(lasso_fit,</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">new_data =</span> MHL_test</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                         )</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>lasso_predict <span class="sc">|&gt;</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rmse</span>(</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">truth =</span> <span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> .pred</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
   .metric .estimator .estimate
@@ -786,6 +838,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 1 rmse    standard        2.60</code></pre>
 </div>
 </div>
+<p>The RMSE on the test set was <strong>2.598</strong>, which means the model’s predictions are off by about 2.6 points on average. Given that the <code>Happiness Score</code> ranges from 0 to 10, this level of error suggests <strong>moderate predictive accuracy</strong>—the model captures some meaningful patterns in the data but still leaves a substantial portion of the variation unexplained. This indicates that while the model is somewhat useful, there may be other important factors influencing happiness that are not captured by the predictors included.</p>
+<p><strong>Coefficients and Significance</strong></p>
+<p>I extracted the model coefficients:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>lasso_coef <span class="ot">&lt;-</span> lasso_fit <span class="sc">|&gt;</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>()</span>
@@ -808,6 +863,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 16 more rows</code></pre>
 </div>
 </div>
+<p>LASSO selected 8 variables with non-zero coefficients (included the intercept). To assess statistical significance, I used a standard linear model and checked 95% confidence intervals:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="st">`</span><span class="at">Happiness Score</span><span class="st">`</span> <span class="sc">~</span> </span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">Diet Type</span><span class="st">`</span> <span class="sc">+</span> </span>
@@ -841,18 +897,64 @@ GenderMale                    -0.100042675  0.399369053
 GenderOther                   -0.181244954  0.315859637</code></pre>
 </div>
 </div>
-<p><strong>Modeling Summary</strong></p>
-<p>To predict happiness scores, I used LASSO regression, which is effective for both regularization and feature selection. LASSO adds a penalty to the regression loss function, shrinking less important coefficients to zero, which simplifies the model and reduces overfitting. I used 10-fold cross-validation on the training data and tuned the penalty parameter over 200 values using RMSE (Root Mean Squared Error) as the performance metric.</p>
-<p>After fitting the LASSO model, 8 predictors were selected with non-zero coefficients. However, when fitting a standard linear regression model to evaluate statistical significance, only 3 variables — <strong>Social Interaction Score</strong> (−0.061), <strong>Screen Time per Day (Hours)</strong> (0.057), and <strong>Exercise Level (Low)</strong> (−0.057) — had 95% confidence intervals that did not include zero, suggesting a more reliable relationship with happiness.</p>
-<p>The RMSE of the final LASSO model on the test set was <strong>2.60</strong>, indicating moderate predictive accuracy on a scale where happiness scores range from 1 to 10.</p>
+<p>Only 3 predictors had confidence intervals that did not include 0, suggesting stronger evidence of an association:</p>
+<ul>
+<li><p>Social Interaction Score</p></li>
+<li><p>Screen Time per Day (Hours)</p></li>
+<li><p><code>Exercise Level</code>Low</p></li>
+</ul>
+<p>However, their confidence intervals were <strong>very close to 0</strong>, which means that while these predictors are statistically significant, the <strong>magnitude of their effects is small</strong>. This implies that the relationship with happiness is likely weak in practical terms, even if statistically detectable. (To illustrate, in the “Exploratory Data Analysis” section, we saw that the relationship between <code>Screen Time per Day (Hours)</code> and <code>Happiness Score</code> was very weak.)</p>
+<p><strong>Summary</strong></p>
+<p>LASSO regression allowed me to build a predictive and interpretable model by selecting a subset of relevant predictors. While the overall model has moderate predictive performance, it highlighted a few key lifestyle factors—like social interaction, screen time, and exercise—that are more consistently related to happiness. However, while three predictors had confidence intervals that excluded zero, their effect sizes were small and close to zero, suggesting that the relationships — though statistically significant — may not be practically strong.</p>
 </section>
 <section id="insights" class="level2">
 <h2 class="anchored" data-anchor-id="insights">Insights</h2>
+<p>To summarize the key findings of the model, I generated a plot of the statistically significant predictors of happiness based on a standard linear regression model. The graph below displays each predictor whose 95% confidence interval does not include zero, meaning we have stronger statistical evidence that they are associated with happiness.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>coef_df <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lm_model, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>significant_coefs <span class="ot">&lt;-</span> coef_df <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">!=</span> <span class="st">"(Intercept)"</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>         conf.low <span class="sc">*</span> conf.high <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(significant_coefs, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(term, estimate), <span class="at">y =</span> estimate)) <span class="sc">+</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> conf.low, <span class="at">ymax =</span> conf.high), <span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Statistically Significant Predictors of Happiness"</span>,</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Predictor"</span>,</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Coefficient"</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Math437_Project_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From this plot, we see that three predictors—Social Interaction Score, Screen Time per Day (Hours), and Exercise Level (Low)—had confidence intervals that did not include zero, indicating statistically significant associations with happiness. However, their estimated effects are close to zero, suggesting that these relationships are weak in practical terms. This finding is consistent with results from the exploratory data analysis, particularly the weak association observed between screen time and happiness. Overall, while the model identifies some lifestyle factors related to happiness, the effect sizes are small, and predictive accuracy remains moderate. The figure reinforces the conclusion that although lifestyle habits like social engagement, screen use, and physical activity are statistically linked to happiness, none of them individually exerts a strong influence. This suggests that happiness is likely shaped by a more complex combination of factors.</p>
 <section id="limitations-and-future-work" class="level3">
 <h3 class="anchored" data-anchor-id="limitations-and-future-work">Limitations and Future Work</h3>
-</section>
-<section id="reflection-optional-subsection" class="level3">
-<h3 class="anchored" data-anchor-id="reflection-optional-subsection">Reflection (Optional Subsection)</h3>
+<p><strong>Limitations</strong></p>
+<p>While the LASSO model helped identify a small subset of predictors and provided a reasonably interpretable model, there are several limitations:</p>
+<p><strong>- Prediction Accuracy:</strong> The RMSE of 2.598 indicates that the model’s predictions deviate from actual happiness scores by an average of about 2.6 points on a 0–10 scale. This suggests moderate predictive performance, but also room for improvement—particularly for individuals at the extremes of the happiness scale (very low or very high scores).</p>
+<p><strong>- Weak Predictive Relationships:</strong> Although three predictors—<strong>social interaction</strong>, <strong>screen time</strong>, and <strong>exercise</strong>—were statistically significant, their coefficients were very close to zero. This implies that their real-world impact on happiness may be quite limited. The model may be missing other unmeasured variables that more strongly influence happiness.</p>
+<p><strong>- Assumptions of Linear Modeling:</strong> Linear regression assumes a linear relationship between predictors and the outcome, homoscedasticity, and independence of errors. In reality, relationships between lifestyle factors and happiness may be non-linear or influenced by interactions that this model does not capture.</p>
+<p><strong>- Multicollinearity:</strong> Some predictors in the model, such as exercise, diet, and screen time, may be correlated with each other. This multicollinearity can inflate the standard errors of coefficients in the linear model, making it harder to determine which variables truly influence happiness. While LASSO helps mitigate this issue by shrinking and selecting coefficients, it may still obscure the interpretation of individual effects in the presence of strongly correlated predictors.</p>
+<p><strong>- Lack of Temporal or Causal Information:</strong> The dataset is observational and cross-sectional, meaning we cannot infer causality. For example, while people who exercise more report higher happiness, we cannot tell if exercise causes happiness or if happier people are more likely to exercise.</p>
+<p><strong>- Potential Biases in Data Collection:</strong> The dataset may not be fully representative across cultures, age groups, or socioeconomic backgrounds. Some variables (e.g., happiness, social interaction) are self-reported, which introduces measurement error and possible social desirability bias.</p>
+<p><strong>Future Work</strong></p>
+<p>To address these limitations, several paths for future research are recommended:</p>
+<p><strong>- Collect Longitudinal Data:</strong> Tracking individuals over time would allow us to better understand causal relationships and how changes in lifestyle affect happiness.</p>
+<p><strong>- Explore Non-Linear Models:</strong> Using tree-based models (e.g., Random Forest or XGBoost) could help uncover complex, non-linear interactions between variables that linear models cannot capture.</p>
+<p><strong>- Investigate Multicollinearity and Dimensionality Reduction:</strong> Future work could further investigate correlations among predictors and consider techniques like Principal Component Analysis (PCA) or more robust regularization methods to reduce multicollinearity. These approaches may help clarify underlying patterns and improve model stability and interpretability.</p>
+<p><strong>- Feature Engineering:</strong> Creating new variables that better capture lifestyle habits (e.g., a composite wellness index or interaction terms) could improve predictive power.</p>
+<p><strong>- Expand Data Collection:</strong> Including variables like mental health status, sleep quality, financial stress, and life events might help capture other key drivers of happiness.</p>
+<p><strong>- Ethical Considerations:</strong> It is important to avoid over-interpreting or misusing the results. For example, suggesting policy based on weak or non-causal associations could be misleading. Also, any recommendations should be sensitive to cultural and individual differences in how happiness is experienced and reported.</p>
 
 
 </section>

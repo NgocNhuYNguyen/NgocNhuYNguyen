@@ -20,8 +20,8 @@ To follow along with this analysis, it helps to understand a few key terms:
 
 ### Diet Types
 
-- **Vegetarian**: Doesn’t include meat but may include dairy or eggs.
-- **Vegan**: Doesn’t include any animal products, including dairy, eggs, or honey.
+- **Vegetarian**: Does not include meat but may include dairy or eggs.
+- **Vegan**: Does not include any animal products, including dairy, eggs, or honey.
 - **Balanced diet**: Includes a mix of healthy foods like fruits, vegetables, proteins, grains, and fats.
 - **Keto**: A low-carb, high-fat diet that helps the body burn fat instead of sugar for energy.
 - **Junk food**: Foods that are highly processed and full of sugar or unhealthy fats, like fast food and soda.
@@ -53,12 +53,18 @@ Ultimately, the objective is to better understand how everyday choices and psych
 library(here)
 library(readr)
 library(dplyr)
-library(ggplot2)
 library(rsample)
+library(ggplot2)
 library(naniar)
-library(tidymodels)
+library(parsnip)
+library(recipes)
+library(workflows)
+library(tune)
+library(yardstick)
+library(dials)
 library(glmnet)
 library(selectiveInference)
+library(broom)
 ```
 
 
@@ -69,7 +75,16 @@ library(selectiveInference)
 | [dplyr](https://dplyr.tidyverse.org/) | to massage and summarize data |
 | [rsample](https://rsample.tidymodels.org/) | to split data into training and test sets |
 | [ggplot2](https://ggplot2.tidyverse.org/) | to create nice-looking and informative graphs |
-| [naniar](https://naniar.njtierney.com/)	| to summarize and visualize missing data
+| [naniar](https://naniar.njtierney.com/)	| to summarize and visualize missing data |
+| [parsnip](https://parsnip.tidymodels.org/) | to define and fit models in a unified framework |
+| [recipes](https://recipes.tidymodels.org/) | to preprocess data through feature engineering steps |
+| [workflows](https://workflows.tidymodels.org/) | to combine preprocessing and modeling into a single object |
+| [tune](https://tune.tidymodels.org/) | to tune model hyperparameters through resampling |
+| [yardstick](https://yardstick.tidymodels.org/) | to evaluate and compare model performance |
+| [dials](https://dials.tidymodels.org/) | to define and generate hyperparameter tuning grids |
+| [glmnet](https://glmnet.stanford.edu/) | to fit regularized linear models like LASSO and Ridge |
+| [selectiveInference](https://cran.r-project.org/package=selectiveInference) | to compute post-selection inference for LASSO models |
+| [broom](https://broom.tidymodels.org/) | to convert model outputs into tidy tibbles |
 
 ## Data Description
 
@@ -118,7 +133,7 @@ All the information in this dataset comes from people filling out surveys about 
 
 Some of the questions in the dataset are vague or not measured well. For example:
 
-"Stress Level" is said to be on a 1–10 scale, but the data uses categories like "Low," "Moderate," and "High," which doesn’t match.
+"Stress Level" is said to be on a 1–10 scale in the Kaggle dataset's description, but the data uses categories like "Low," "Moderate," and "High," which does not match.
 
 "Exercise Level" is just labeled as "Low," "Moderate," or "High," but it doesn’t tell us how often or how intensely people exercise.
 
@@ -126,11 +141,11 @@ The "Mental Health Condition" column includes things like depression and anxiety
 
 **Some data is missing or unclear:**
 
-For example, the "Gender" column includes a large number of people marked as "Other," but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it’s hard to use this information meaningfully.
+For example, the "Gender" column includes a large number of people marked as "Other," but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it is hard to use this information meaningfully.
 
 **The results might not apply to everyone:**
 
-The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we don’t know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.
+The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we do not know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.
 
 Because of these issues, we should treat this dataset more like a practice dataset—similar to examples used in class—rather than something that gives real-world, trustworthy results. It’s still helpful for learning how to explore data and build models, but the results should not be taken as scientifically accurate.
 
@@ -159,7 +174,6 @@ Before proceeding with modeling or analysis, it’s important to check for any m
 #| message: false
 #| warning: false
 
-library(naniar)
 miss_var_summary(Mental.Health.Lifestyle)
 ```
 
@@ -379,7 +393,7 @@ geom_smooth(method = "loess", se = FALSE)
 
 **Scatterplot Interpretation:**
 
-The scatter plot shows only a **very weak and non-linear relationship** between sleep hours and happiness scores. Most participants reported sleeping between 5.5 and 7.5 hours, and their happiness scores generally fall between 4 and 7. The trend line suggests that people who sleep extremely little or a lot aren’t necessarily less happy, but they also aren’t much happier either.
+The scatterplot shows the relationship between sleep hours and happiness score. Although the data points are highly dispersed, a smoothed trend line reveals a subtle non-linear pattern. Specifically, individuals who report very few hours of sleep (e.g., less than 4 hours) tend to have slightly higher happiness scores, but the trend then dips and gradually levels off as sleep duration increases. Overall, the association between sleep and happiness appears weak and inconsistent, suggesting that sleep duration alone does not strongly predict happiness.
 
 **Correlation Analysis:**
 
@@ -391,11 +405,23 @@ The correlation coefficient is **0.0085**, which is extremely close to zero. Thi
 
 **Conclusion:**
 
-The effect of sleep hours on happiness score is very small. This suggests that **sleep alone likely doesn’t play a major role** in determining happiness — though it could interact with other factors like stress, screen time, or social interaction.
+The effect of sleep hours on happiness score is very small. This suggests that **sleep alone likely does not play a major role** in determining happiness — though it could interact with other factors like stress, screen time, or social interaction.
 
 The exploratory analysis suggests that neither **screen time** nor **sleep hours** individually show a strong relationship with **happiness score**. To better understand what drives happiness, we now turn to **modeling**, where we will consider **multiple lifestyle variables** together. By using statistical and machine learning techniques, such as **LASSO regression**, we can identify which predictors are most influential and how they interact to impact happiness.
 
 ## Modeling
+
+I used **LASSO regression (Least Absolute Shrinkage and Selection Operator)** to model the relationship between lifestyle factors and happiness score. LASSO is particularly useful when we have many predictors, some of which may be irrelevant. It performs both:
+
+- **Regularization**, to avoid overfitting by penalizing large coefficients
+
+- **Variable selection**, by shrinking some coefficients to exactly zero
+
+This makes the resulting model more interpretable and potentially more generalizable to new data.
+
+**Model Specification and Preprocessing**
+
+I defined a LASSO regression model with a tunable penalty:
 
 ```{r}
 lasso_model <- linear_reg(mode = "regression",
@@ -403,6 +429,8 @@ engine = "glmnet",
 penalty = tune(),
 mixture = 1)
 ```
+
+Then, I created a preprocessing recipe and combined the model and recipe into a workflow:
 
 ```{r}
 lasso_recipe <- recipe(
@@ -415,6 +443,10 @@ lasso_wflow <- workflow() |>
   add_model(lasso_model) |>
   add_recipe(lasso_recipe)
 ```
+
+**Cross-Validation and Tuning**
+
+I used 10-fold cross-validation to tune the penalty parameter and tuned the penalty parameter over 200 values:
 
 ```{r}
 set.seed(1234)
@@ -430,6 +462,8 @@ lasso_tune<-tune_grid(lasso_model,
                       metrics= metric_set(rmse))
 ```
 
+I visualized the tuning results:
+
 ```{r}
 lasso_tune|>
   collect_metrics() |>
@@ -439,15 +473,14 @@ lasso_tune|>
 scale_x_log10()
 ```
 
+**Best Model Selection and Fitting**
+
+I selected the penalty with the lowest RMSE (Root Mean Squared Error):
+
 ```{r}
 lasso_min <- lasso_tune |>
   select_best(
     metric = "rmse"
-    )
-lasso_best_1se <- lasso_tune |>
-  select_by_one_std_err(
-    metric = "rmse",
-    desc(penalty) 
     )
 lasso_min
 ```
@@ -457,12 +490,18 @@ lasso_wflow_final <- lasso_wflow |>
   finalize_workflow(parameters = lasso_min)
 lasso_fit <- fit(lasso_wflow_final,
                  data = MHL_train)
+```
+
+**Prediction and Model Performance**
+
+I chose **Root Mean Squared Error (RMSE)** as the performance metric because it provides a clear measure of how well the model predicts the `Happiness Score`, with errors expressed in the same units. RMSE calculates the square root of the average squared differences between predicted and actual values, which penalizes larger errors more heavily. This makes it a useful and interpretable way to evaluate the accuracy of a regression model, especially when predicting a continuous outcome like `Happiness Score`.
+
+I evaluated the model on the test set:
+
+```{r}
 lasso_predict <- augment(lasso_fit,
                          new_data = MHL_test
                          )
-```
-
-```{r}
 lasso_predict |>
   rmse(
     truth = `Happiness Score`,
@@ -470,12 +509,20 @@ lasso_predict |>
     )
 ```
 
+The RMSE on the test set was **2.598**, which means the model’s predictions are off by about 2.6 points on average. Given that the `Happiness Score` ranges from 0 to 10, this level of error suggests **moderate predictive accuracy**—the model captures some meaningful patterns in the data but still leaves a substantial portion of the variation unexplained. This indicates that while the model is somewhat useful, there may be other important factors influencing happiness that are not captured by the predictors included.
+
+**Coefficients and Significance**
+
+I extracted the model coefficients:
+
 ```{r}
 lasso_coef <- lasso_fit |>
   broom::tidy()
 lasso_coef |>
   arrange(desc(abs(estimate)))
 ```
+
+LASSO selected 8 variables with non-zero coefficients (included the intercept). To assess statistical significance, I used a standard linear model and checked 95% confidence intervals:
 
 ```{r}
 lm_model <- lm(`Happiness Score` ~ 
@@ -491,16 +538,77 @@ conf_intervals <- confint(lm_model, level = 0.95)
 conf_intervals
 ```
 
-**Modeling Summary**
+Only 3 predictors had confidence intervals that did not include 0, suggesting stronger evidence of an association:
 
-To predict happiness scores, I used LASSO regression, which is effective for both regularization and feature selection. LASSO adds a penalty to the regression loss function, shrinking less important coefficients to zero, which simplifies the model and reduces overfitting. I used 10-fold cross-validation on the training data and tuned the penalty parameter over 200 values using RMSE (Root Mean Squared Error) as the performance metric.
+- Social Interaction Score
 
-After fitting the LASSO model, 8 predictors were selected with non-zero coefficients. However, when fitting a standard linear regression model to evaluate statistical significance, only 3 variables — **Social Interaction Score** (−0.061), **Screen Time per Day (Hours)** (0.057), and **Exercise Level (Low)** (−0.057) — had 95% confidence intervals that did not include zero, suggesting a more reliable relationship with happiness.
+- Screen Time per Day (Hours)
 
-The RMSE of the final LASSO model on the test set was **2.60**, indicating moderate predictive accuracy on a scale where happiness scores range from 1 to 10.
+- `Exercise Level`Low
+
+However, their confidence intervals were **very close to 0**, which means that while these predictors are statistically significant, the **magnitude of their effects is small**. This implies that the relationship with happiness is likely weak in practical terms, even if statistically detectable.
+(To illustrate, in the "Exploratory Data Analysis" section, we saw that the relationship between `Screen Time per Day (Hours)` and `Happiness Score` was very weak.)
+
+**Summary**
+
+LASSO regression allowed me to build a predictive and interpretable model by selecting a subset of relevant predictors. While the overall model has moderate predictive performance, it highlighted a few key lifestyle factors—like social interaction, screen time, and exercise—that are more consistently related to happiness. However, while three predictors had confidence intervals that excluded zero, their effect sizes were small and close to zero, suggesting that the relationships — though statistically significant — may not be practically strong.
 
 ## Insights
 
+To summarize the key findings of the model, I generated a plot of the statistically significant predictors of happiness based on a standard linear regression model. The graph below displays each predictor whose 95% confidence interval does not include zero, meaning we have stronger statistical evidence that they are associated with happiness.
+
+```{r}
+coef_df <- tidy(lm_model, conf.int = TRUE)
+
+significant_coefs <- coef_df |>
+  filter(term != "(Intercept)",
+         conf.low * conf.high > 0)
+
+ggplot(significant_coefs, aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  coord_flip() +
+  labs(
+    title = "Statistically Significant Predictors of Happiness",
+    x = "Predictor",
+    y = "Estimated Coefficient"
+  ) +
+  theme_minimal()
+```
+
+From this plot, we see that three predictors—Social Interaction Score, Screen Time per Day (Hours), and Exercise Level (Low)—had confidence intervals that did not include zero, indicating statistically significant associations with happiness. However, their estimated effects are close to zero, suggesting that these relationships are weak in practical terms. This finding is consistent with results from the exploratory data analysis, particularly the weak association observed between screen time and happiness. Overall, while the model identifies some lifestyle factors related to happiness, the effect sizes are small, and predictive accuracy remains moderate. The figure reinforces the conclusion that although lifestyle habits like social engagement, screen use, and physical activity are statistically linked to happiness, none of them individually exerts a strong influence. This suggests that happiness is likely shaped by a more complex combination of factors.
+
 ### Limitations and Future Work
 
-### Reflection (Optional Subsection)
+**Limitations**
+
+While the LASSO model helped identify a small subset of predictors and provided a reasonably interpretable model, there are several limitations:
+
+**- Prediction Accuracy:** The RMSE of 2.598 indicates that the model’s predictions deviate from actual happiness scores by an average of about 2.6 points on a 0–10 scale. This suggests moderate predictive performance, but also room for improvement—particularly for individuals at the extremes of the happiness scale (very low or very high scores).
+
+**- Weak Predictive Relationships:** Although three predictors—**social interaction**, **screen time**, and **exercise**—were statistically significant, their coefficients were very close to zero. This implies that their real-world impact on happiness may be quite limited. The model may be missing other unmeasured variables that more strongly influence happiness.
+
+**- Assumptions of Linear Modeling:** Linear regression assumes a linear relationship between predictors and the outcome, homoscedasticity, and independence of errors. In reality, relationships between lifestyle factors and happiness may be non-linear or influenced by interactions that this model does not capture.
+
+**- Multicollinearity:** Some predictors in the model, such as exercise, diet, and screen time, may be correlated with each other. This multicollinearity can inflate the standard errors of coefficients in the linear model, making it harder to determine which variables truly influence happiness. While LASSO helps mitigate this issue by shrinking and selecting coefficients, it may still obscure the interpretation of individual effects in the presence of strongly correlated predictors.
+
+**- Lack of Temporal or Causal Information:** The dataset is observational and cross-sectional, meaning we cannot infer causality. For example, while people who exercise more report higher happiness, we cannot tell if exercise causes happiness or if happier people are more likely to exercise.
+
+**- Potential Biases in Data Collection:** The dataset may not be fully representative across cultures, age groups, or socioeconomic backgrounds. Some variables (e.g., happiness, social interaction) are self-reported, which introduces measurement error and possible social desirability bias.
+
+**Future Work**
+
+To address these limitations, several paths for future research are recommended:
+
+**- Collect Longitudinal Data:** Tracking individuals over time would allow us to better understand causal relationships and how changes in lifestyle affect happiness.
+
+**- Explore Non-Linear Models:** Using tree-based models (e.g., Random Forest or XGBoost) could help uncover complex, non-linear interactions between variables that linear models cannot capture.
+
+**- Investigate Multicollinearity and Dimensionality Reduction:** Future work could further investigate correlations among predictors and consider techniques like Principal Component Analysis (PCA) or more robust regularization methods to reduce multicollinearity. These approaches may help clarify underlying patterns and improve model stability and interpretability.
+
+**- Feature Engineering:** Creating new variables that better capture lifestyle habits (e.g., a composite wellness index or interaction terms) could improve predictive power.
+
+**- Expand Data Collection:** Including variables like mental health status, sleep quality, financial stress, and life events might help capture other key drivers of happiness.
+
+**- Ethical Considerations:** It is important to avoid over-interpreting or misusing the results. For example, suggesting policy based on weak or non-causal associations could be misleading. Also, any recommendations should be sensitive to cultural and individual differences in how happiness is experienced and reported.
