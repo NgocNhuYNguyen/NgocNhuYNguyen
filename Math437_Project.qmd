@@ -135,13 +135,13 @@ Some of the questions in the dataset are vague or not measured well. For example
 
 "Stress Level" is said to be on a 1–10 scale in the Kaggle dataset's description, but the data uses categories like "Low," "Moderate," and "High," which does not match.
 
-"Exercise Level" is just labeled as "Low," "Moderate," or "High," but it doesn’t tell us how often or how intensely people exercise.
+"Exercise Level" is just labeled as "Low," "Moderate," or "High," but it does not tell us how often or how intensely people exercise.
 
-The "Mental Health Condition" column includes things like depression and anxiety, but it doesn’t explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.
+The "Mental Health Condition" column includes things like depression and anxiety, but it does not explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.
 
 **Some data is missing or unclear:**
 
-For example, the "Gender" column includes a large number of people marked as "Other," but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it is hard to use this information meaningfully.
+For example, the "Gender" column includes a large number of people marked as "Other," but it is not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it is hard to use this information meaningfully.
 
 **The results might not apply to everyone:**
 
@@ -538,13 +538,13 @@ conf_intervals <- confint(lm_model, level = 0.95)
 conf_intervals
 ```
 
-Only 3 predictors had confidence intervals that did not include 0, suggesting stronger evidence of an association:
+Not including the intercept, only **3 out of 7** LASSO-selected variables had confidence intervals that **did not include 0**, suggesting stronger evidence of an association with happiness:
 
 - Social Interaction Score
 
 - Screen Time per Day (Hours)
 
-- `Exercise Level`Low
+- Exercise Level: Low
 
 However, their confidence intervals were **very close to 0**, which means that while these predictors are statistically significant, the **magnitude of their effects is small**. This implies that the relationship with happiness is likely weak in practical terms, even if statistically detectable.
 (To illustrate, in the "Exploratory Data Analysis" section, we saw that the relationship between `Screen Time per Day (Hours)` and `Happiness Score` was very weak.)
@@ -555,7 +555,7 @@ LASSO regression allowed me to build a predictive and interpretable model by sel
 
 ## Insights
 
-To summarize the key findings of the model, I generated a plot of the statistically significant predictors of happiness based on a standard linear regression model. The graph below displays each predictor whose 95% confidence interval does not include zero, meaning we have stronger statistical evidence that they are associated with happiness.
+To summarize the key findings of the model, I generated a plot of the statistically significant predictors of happiness based on a standard linear regression model. The graph below displays each predictor whose 95% confidence interval does not include zero, indicating stronger statistical evidence of an association with happiness.
 
 ```{r}
 coef_df <- tidy(lm_model, conf.int = TRUE)
@@ -577,7 +577,11 @@ ggplot(significant_coefs, aes(x = reorder(term, estimate), y = estimate)) +
   theme_minimal()
 ```
 
-From this plot, we see that three predictors—Social Interaction Score, Screen Time per Day (Hours), and Exercise Level (Low)—had confidence intervals that did not include zero, indicating statistically significant associations with happiness. However, their estimated effects are close to zero, suggesting that these relationships are weak in practical terms. This finding is consistent with results from the exploratory data analysis, particularly the weak association observed between screen time and happiness. Overall, while the model identifies some lifestyle factors related to happiness, the effect sizes are small, and predictive accuracy remains moderate. The figure reinforces the conclusion that although lifestyle habits like social engagement, screen use, and physical activity are statistically linked to happiness, none of them individually exerts a strong influence. This suggests that happiness is likely shaped by a more complex combination of factors.
+From this plot, we see that three predictors—Social Interaction Score, Screen Time per Day (Hours), and Exercise Level: Low—had confidence intervals that did not include zero, indicating statistically significant associations with happiness. However, their estimated effects are close to zero, suggesting that while these variables are statistically significant, their practical impact on happiness is limited. This finding aligns with the exploratory data analysis, especially the weak association observed between screen time and happiness.
+
+Notably, these three variables were also among the seven selected by the LASSO model, providing some validation of their relevance. However, the LASSO model's test RMSE of 2.598 indicates that predictions deviate from actual happiness scores by about 2.6 points on a 0–10 scale, which reflects only moderate predictive accuracy.
+
+Overall, the figure reinforces the conclusion that although habits like social interaction, screen use, and physical activity are statistically linked to happiness, none of them alone exerts a strong influence. This suggests that happiness is shaped by a more complex combination of lifestyle and perhaps unmeasured psychological or contextual factors.
 
 ### Limitations and Future Work
 

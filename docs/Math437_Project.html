@@ -434,10 +434,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Some variables are unclear or inconsistent:</strong></p>
 <p>Some of the questions in the dataset are vague or not measured well. For example:</p>
 <p>“Stress Level” is said to be on a 1–10 scale in the Kaggle dataset’s description, but the data uses categories like “Low,” “Moderate,” and “High,” which does not match.</p>
-<p>“Exercise Level” is just labeled as “Low,” “Moderate,” or “High,” but it doesn’t tell us how often or how intensely people exercise.</p>
-<p>The “Mental Health Condition” column includes things like depression and anxiety, but it doesn’t explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.</p>
+<p>“Exercise Level” is just labeled as “Low,” “Moderate,” or “High,” but it does not tell us how often or how intensely people exercise.</p>
+<p>The “Mental Health Condition” column includes things like depression and anxiety, but it does not explain how severe they are or how they were diagnosed. These conditions are very complex, and simple labels might not show the full picture.</p>
 <p><strong>Some data is missing or unclear:</strong></p>
-<p>For example, the “Gender” column includes a large number of people marked as “Other,” but it’s not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it is hard to use this information meaningfully.</p>
+<p>For example, the “Gender” column includes a large number of people marked as “Other,” but it is not clear what that means—whether they’re non-binary, chose not to say, or something else. Without more detail, it is hard to use this information meaningfully.</p>
 <p><strong>The results might not apply to everyone:</strong></p>
 <p>The dataset was collected between 2019 and 2024, a period that included the COVID-19 pandemic, which had a major impact on people’s daily lives and mental health. Because of this, the results might not reflect what’s normal in other years. Also, we do not know where the participants are from or how they were selected, so the dataset might not represent people from different countries, cultures, or income levels. That means any patterns we find might not apply to everyone.</p>
 <p>Because of these issues, we should treat this dataset more like a practice dataset—similar to examples used in class—rather than something that gives real-world, trustworthy results. It’s still helpful for learning how to explore data and build models, but the results should not be taken as scientifically accurate.</p>
@@ -897,11 +897,11 @@ GenderMale                    -0.100042675  0.399369053
 GenderOther                   -0.181244954  0.315859637</code></pre>
 </div>
 </div>
-<p>Only 3 predictors had confidence intervals that did not include 0, suggesting stronger evidence of an association:</p>
+<p>Not including the intercept, only <strong>3 out of 7</strong> LASSO-selected variables had confidence intervals that <strong>did not include 0</strong>, suggesting stronger evidence of an association with happiness:</p>
 <ul>
 <li><p>Social Interaction Score</p></li>
 <li><p>Screen Time per Day (Hours)</p></li>
-<li><p><code>Exercise Level</code>Low</p></li>
+<li><p>Exercise Level: Low</p></li>
 </ul>
 <p>However, their confidence intervals were <strong>very close to 0</strong>, which means that while these predictors are statistically significant, the <strong>magnitude of their effects is small</strong>. This implies that the relationship with happiness is likely weak in practical terms, even if statistically detectable. (To illustrate, in the “Exploratory Data Analysis” section, we saw that the relationship between <code>Screen Time per Day (Hours)</code> and <code>Happiness Score</code> was very weak.)</p>
 <p><strong>Summary</strong></p>
@@ -909,7 +909,7 @@ GenderOther                   -0.181244954  0.315859637</code></pre>
 </section>
 <section id="insights" class="level2">
 <h2 class="anchored" data-anchor-id="insights">Insights</h2>
-<p>To summarize the key findings of the model, I generated a plot of the statistically significant predictors of happiness based on a standard linear regression model. The graph below displays each predictor whose 95% confidence interval does not include zero, meaning we have stronger statistical evidence that they are associated with happiness.</p>
+<p>To summarize the key findings of the model, I generated a plot of the statistically significant predictors of happiness based on a standard linear regression model. The graph below displays each predictor whose 95% confidence interval does not include zero, indicating stronger statistical evidence of an association with happiness.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>coef_df <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lm_model, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -936,7 +936,9 @@ GenderOther                   -0.181244954  0.315859637</code></pre>
 </div>
 </div>
 </div>
-<p>From this plot, we see that three predictors—Social Interaction Score, Screen Time per Day (Hours), and Exercise Level (Low)—had confidence intervals that did not include zero, indicating statistically significant associations with happiness. However, their estimated effects are close to zero, suggesting that these relationships are weak in practical terms. This finding is consistent with results from the exploratory data analysis, particularly the weak association observed between screen time and happiness. Overall, while the model identifies some lifestyle factors related to happiness, the effect sizes are small, and predictive accuracy remains moderate. The figure reinforces the conclusion that although lifestyle habits like social engagement, screen use, and physical activity are statistically linked to happiness, none of them individually exerts a strong influence. This suggests that happiness is likely shaped by a more complex combination of factors.</p>
+<p>From this plot, we see that three predictors—Social Interaction Score, Screen Time per Day (Hours), and Exercise Level: Low—had confidence intervals that did not include zero, indicating statistically significant associations with happiness. However, their estimated effects are close to zero, suggesting that while these variables are statistically significant, their practical impact on happiness is limited. This finding aligns with the exploratory data analysis, especially the weak association observed between screen time and happiness.</p>
+<p>Notably, these three variables were also among the seven selected by the LASSO model, providing some validation of their relevance. However, the LASSO model’s test RMSE of 2.598 indicates that predictions deviate from actual happiness scores by about 2.6 points on a 0–10 scale, which reflects only moderate predictive accuracy.</p>
+<p>Overall, the figure reinforces the conclusion that although habits like social interaction, screen use, and physical activity are statistically linked to happiness, none of them alone exerts a strong influence. This suggests that happiness is shaped by a more complex combination of lifestyle and perhaps unmeasured psychological or contextual factors.</p>
 <section id="limitations-and-future-work" class="level3">
 <h3 class="anchored" data-anchor-id="limitations-and-future-work">Limitations and Future Work</h3>
 <p><strong>Limitations</strong></p>
